@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Discussion Threads - {% block title %}{% endblock %}</title>
+</head>
+<body>
+	<h1>Discussion Threads</h1>
+	  <nav>
+    <ul>
+      <li><a href="/topics">Topics</a></li>
+      <li><a href="/search">Search</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+	<hr>
+	{% block content %}{% endblock %}
+	<hr>
+</body>
+</html>

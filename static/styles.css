@@ -1,0 +1,39 @@
+body {
+	background: #FFEFD5;
+    margin: auto;
+    max-width: 45em;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+nav ul {
+    padding: 0;
+	margin: .5em;
+    text-align: center;
+}
+
+
+nav li {
+    display: inline-block;
+    padding: .5em 1em;
+    border-radius: .5em;
+    margin: .2em;
+}
+
+nav li a {
+    text-decoration: none;
+    color: #000;
+}
+
+nav li:hover {
+    background-color: rgb(226, 226, 226);
+}
+
+
+.error {
+color: red;
+font-weight: bold;
+}
