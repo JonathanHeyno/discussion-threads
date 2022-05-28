@@ -12,7 +12,7 @@ Password: <input type="password" name="password"> <br>
 	<p class="error"> {{ login_message }} </p>
 {% endif %}
 <br>
-Retype password: <input type="text" name="password2"> <br>
+Retype password: <input type="password" name="password2"> <br>
 Create as admin account: <input type="checkbox" name="is_admin" value="Y"> <br>
 <button type="submit" formaction="/register">Create</button>
 {% if register_message %}
