@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}Edit Topic{% endblock %}
+{% block content %}
+<h2>Edit Topic</h2>
+
+
+POISTA: {{ topic.name }}
+
+
+<form action="/edit_topic/{{ topic.id }}" method="POST">
+
+<input type="submit" value="Save Changes"> <br>
+
+Topic name: <input type="text" name="name", value={{ topic.name }} size="40"><br>
+
+Hidden:
+{% if topic.is_hidden %}
+	<input type="checkbox" name="is_hidden" value="Y" checked> <br>
+{% else %}
+<input type="checkbox" name="is_hidden" value="Y"> <br>
+{% endif %}
+
+
+For a topic that is or will be hidden:<br>
+Remove access from following users (admins will always have access):<br>
+
+{% for user in have_access %}
+<input type="checkbox" name="revoke_access" value= {{ user.id }}> {{ user.username }}<br>
+{% endfor %}
+
+
+Grant access for following users:<br>
+
+{% for user in missing_access %}
+<input type="checkbox" name="grant_access" value= {{ user.id }}> {{ user.username }}<br>
+{% endfor %}
+
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endblock %}

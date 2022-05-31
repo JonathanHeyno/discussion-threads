@@ -18,8 +18,9 @@ def login(username, password):
             return False
 
 def logout():
-    del session["user_id"]
-    del session["is_admin"]
+    if user_id() != 0:
+        del session["user_id"]
+        del session["is_admin"]
 
 def user_id():
     return session.get("user_id",0)

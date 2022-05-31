@@ -10,12 +10,15 @@
 <form action="/topics" method="POST">
 
 {% if is_admin %}
-	<input type="submit" value="Create New Topic"><br>
+	<button type="submit" formaction="/topics">Create New Topic</button><br>
+	{% for topic in topic_list %}
+	<button type="submit" formaction="/get_topic_for_editing/{{ topic.id }}">Edit</button>{{ topic.name }}<br>
+	{% endfor %}
+{% else %}
+	{% for topic in topic_list %}
+		{{ topic.name }}<br>
+	{% endfor %}
 {% endif %}
-
-{% for topic in topic_list %}
-{{ topic.name }}<br>
-{% endfor %}
 
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
