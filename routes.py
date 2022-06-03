@@ -1,7 +1,6 @@
 from app import app
 from flask import render_template, request, redirect, session
-#import messages, users
-import users, topics
+import users, topics, threads
 from werkzeug.exceptions import abort
 
 @app.route("/")
@@ -58,7 +57,7 @@ def create_topic():
     if users.user_id() == 0:
         return render_template("login.html", login_message="Not logged in")
     if not users.is_admin():
-        abort(403, description="Not an administrator")
+        abort(401, description="Not an administrator")
     userslist=users.get_users()
     if request.method == "GET":
         return render_template("create_topic.html", users=userslist)
@@ -77,10 +76,13 @@ def edit_topic(topic_id):
     if users.user_id() == 0:
         return render_template("login.html", login_message="Not logged in")
     if not users.is_admin():
-        abort(403, description="Not an administrator")
+        abort(401, description="Not an administrator")
+    topic = topics.get_topic_if_user_has_access(topic_id)
+    if not topic:
+        abort(404, description="Topic does not exist")
     if request.method == "GET":
-        return render_template("edit_topic.html", topic=topics.get_topic_without_threads(topic_id),
-        have_access=topics.get_users_with_access(topic_id), missing_access=topics.get_users_without_access(topic_id))
+        return render_template("edit_topic.html", topic=topic,
+        user_accesses=topics.get_users_and_access_rights(topic_id))
     if request.method == "POST":
         name = request.form["name"]
         is_hidden = False
@@ -91,3 +93,16 @@ def edit_topic(topic_id):
         topics.edit(topic_id, name, is_hidden, revoke_access, grant_access)
         return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Saved changes to topic")
     return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Could not save changes to topic")
+
+
+@app.route("/topic/<int:topic_id>", methods=["GET", "POST"])
+def topic(topic_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+    topic = topics.get_topic_if_user_has_access(topic_id)
+    if not topic:
+        abort(401, description="Access to topic denied or topic does not exist")
+    if request.method == "GET":
+        return render_template("topic.html", topic=topic, threads=threads.list_threads(topic_id))
+    if request.method == "POST":
+        return redirect("/create_thread")

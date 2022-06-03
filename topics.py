@@ -16,7 +16,6 @@ def create(name, is_hidden, have_access):
         db.session.commit()
         return True
     except:
-        print("Tultiin exceptioniin")
         return False
 
 def list_topics():
@@ -30,27 +29,15 @@ def list_topics():
         result = db.session.execute(sql, {"user_id":users.user_id()})
     return result.fetchall()
 
-def get_topic_without_threads(topic_id):
-    sql = "SELECT id, name, is_hidden FROM topics WHERE is_visible=TRUE AND id=:topic_id ORDER BY name"
-    result = db.session.execute(sql, {"topic_id":topic_id})
-    return result.fetchone()
-
-def get_users_with_access(topic_id):
-    sql = """SELECT DISTINCT u.id, u.username FROM users u LEFT JOIN topic_access ta ON u.id = ta.user_id 
-    WHERE ta.topic_id=:topic_id ORDER BY u.username"""
-    result = db.session.execute(sql, {"topic_id":topic_id})
-    return result.fetchall()
-
-def get_users_without_access(topic_id):
-    sql = """SELECT DISTINCT u.id, u.username FROM users u LEFT JOIN (SELECT user_id FROM topic_access WHERE topic_id=:topic_id) t2 
-    ON u.id = t2.user_id WHERE t2.user_id IS NULL ORDER BY u.username"""
+def get_users_and_access_rights(topic_id):
+    sql = """SELECT DISTINCT u.id, u.username, t2.user_id AS has_access FROM users u LEFT JOIN (SELECT user_id FROM topic_access WHERE topic_id=:topic_id) t2 
+    ON u.id = t2.user_id ORDER BY u.username"""
     result = db.session.execute(sql, {"topic_id":topic_id})
     return result.fetchall()
 
 def edit(topic_id, name, is_hidden, revoke_access, grant_access):
     sql = "UPDATE topics SET name=:name, is_hidden=:is_hidden WHERE id=:topic_id"
     db.session.execute(sql, {"topic_id":topic_id, "name":name, "is_hidden":is_hidden})
-    db.session.execute("UPDATE topics SET name='KAKKAA' WHERE id=12")
     if revoke_access:
         for user_id in revoke_access:
             sql = "DELETE FROM topic_access WHERE topic_id=:topic_id AND user_id=:user_id"
@@ -60,3 +47,29 @@ def edit(topic_id, name, is_hidden, revoke_access, grant_access):
             sql = "INSERT INTO topic_access (topic_id, user_id) VALUES (:topic_id, :user_id)"
             db.session.execute(sql, {"topic_id":topic_id, "user_id":user_id})
     db.session.commit()
+
+def topic_exists(topic_id):
+    sql = "SELECT id FROM topics where id=:topic_id AND is_visible=True"
+    result = db.session.execute(sql, {"topic_id":topic_id})
+    if result.fetchone():
+        return True
+    return False
+
+def get_topic_if_user_has_access(topic_id):
+    if users.user_id() == 0:
+        return []
+    sql = "SELECT id, name, is_visible, is_hidden FROM topics WHERE id=:topic_id"
+    result1 = db.session.execute(sql, {"topic_id":topic_id}).fetchone()
+    if not result1:
+        return []
+    if result1["is_visible"]==False:
+        return []
+    if users.is_admin():
+        return result1
+    if result1["is_hidden"]==False:
+        return result1
+    sql = "SELECT user_id FROM topic_access WHERE topic_id=:topic_id AND user_id=:user_id"
+    result2 = db.session.execute(sql, {"topic_id":topic_id}).fetchone()
+    if result2:
+        return result1
+    return []

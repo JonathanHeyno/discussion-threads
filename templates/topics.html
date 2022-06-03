@@ -12,11 +12,12 @@
 {% if is_admin %}
 	<button type="submit" formaction="/topics">Create New Topic</button><br>
 	{% for topic in topic_list %}
-	<button type="submit" formaction="/get_topic_for_editing/{{ topic.id }}">Edit</button>{{ topic.name }}<br>
+	<button type="submit" formaction="/get_topic_for_editing/{{ topic.id }}">Edit</button>
+	<a href="/topic/{{ topic.id}}">{{ topic.name }}</a><br>
 	{% endfor %}
 {% else %}
 	{% for topic in topic_list %}
-		{{ topic.name }}<br>
+		<a href="/topic/{{ topic.id}}">{{ topic.name }}</a><br>
 	{% endfor %}
 {% endif %}
 
