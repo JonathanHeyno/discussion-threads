@@ -3,8 +3,11 @@
 {% block content %}
 <h2>Topic: {{ topic.name }}</h2>
 
+{% if message %}
+	<p class="error"> {{ message }} </p>
+{% endif %}
 
-<form action="/create_thread" method="POST">
+<form action="/topic/{{ topic.id }}" method="POST">
 
 <input type="submit" value="Create New Thread"> <br>
 
@@ -13,7 +16,7 @@
 Threads:<br>
 
 {% for thread in threads %}
-<a href="/thread/{{ thread.id}}">{{ thread.subject }}</a>
+<a href="/thread/{{ thread.id}}">{{ thread.subject }}</a><br>
 {% endfor %}
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

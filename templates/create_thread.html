@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Create Thread{% endblock %}
+{% block content %}
+<h2>Topic: {{ topic.name }}</h2>
+
+<h3>Create thread</h3>
+
+{% if message %}
+	<p class="error"> {{ message }} </p>
+{% endif %}
+
+<form action="/create_thread/{{ topic.id }}" method="POST">
+
+Thread name: <textarea name="subject" rows="2" cols="40"></textarea><br>
+Message: <textarea name="message" rows="3" cols="40"></textarea><br>
+<input type="submit" value="Create"> <br>
+
+
+
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endblock %}

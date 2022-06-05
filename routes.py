@@ -1,6 +1,6 @@
 from app import app
-from flask import render_template, request, redirect, session
-import users, topics, threads
+from flask import render_template, request, redirect
+import users, topics, threads, messages
 from werkzeug.exceptions import abort
 
 @app.route("/")
@@ -58,8 +58,8 @@ def create_topic():
         return render_template("login.html", login_message="Not logged in")
     if not users.is_admin():
         abort(401, description="Not an administrator")
-    userslist=users.get_users()
     if request.method == "GET":
+        userslist=users.get_users()
         return render_template("create_topic.html", users=userslist)
     if request.method == "POST":
         name = request.form["name"]
@@ -69,6 +69,7 @@ def create_topic():
         have_access = request.form.getlist("have_access")
         if topics.create(name, is_hidden, have_access):
             return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Topic created")
+    userslist=users.get_users()
     return render_template("create_topic.html", message="Could not create topic", users=userslist)
 
 @app.route("/edit_topic/<int:topic_id>", methods=["GET", "POST"])
@@ -99,10 +100,44 @@ def edit_topic(topic_id):
 def topic(topic_id):
     if users.user_id() == 0:
         return render_template("login.html", login_message="Not logged in")
+    if request.method == "GET":
+        topic = topics.get_topic_if_user_has_access(topic_id)
+        if not topic:
+            abort(401, description="Access to topic denied or topic does not exist")
+        return render_template("topic.html", topic=topic, threads=threads.list_threads(topic_id))
+    if request.method == "POST":
+        return redirect("/create_thread/"+str(topic_id))
+
+@app.route("/create_thread/<int:topic_id>", methods=["GET", "POST"])
+def create_thread(topic_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
     topic = topics.get_topic_if_user_has_access(topic_id)
     if not topic:
         abort(401, description="Access to topic denied or topic does not exist")
     if request.method == "GET":
-        return render_template("topic.html", topic=topic, threads=threads.list_threads(topic_id))
+        return render_template("create_thread.html", topic=topic)
     if request.method == "POST":
-        return redirect("/create_thread")
+        subject = request.form["subject"]
+        message = request.form["message"]
+        if threads.create(subject, topic_id, message):
+            return render_template("topic.html", topic=topic, threads=threads.list_threads(topic_id), message="Thread created")
+    return render_template("create_thread.html", topic=topic, message="Could not create thread")
+
+@app.route("/thread/<int:thread_id>", methods=["GET", "POST"])
+def thread(thread_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+    thread = threads.get_thread(thread_id)
+    if not thread:
+        abort(401, description="Thread does not exist")
+    topic = topics.get_topic_if_user_has_access(thread["topic_id"])
+    if not topic:
+        abort(401, description="Access denied")
+    if request.method == "GET":
+        return render_template("thread.html", topic=topic, thread=thread, messages=messages.list_messages(thread_id))
+    if request.method == "POST":
+        content = request.form["content"]
+        if messages.new(content, thread_id):
+            return render_template("thread.html", topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Message sent")
+        return render_template("thread.html", topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Could not send message")

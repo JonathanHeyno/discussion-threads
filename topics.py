@@ -1,4 +1,3 @@
-from re import A
 from app import db
 import users
 
@@ -58,11 +57,9 @@ def topic_exists(topic_id):
 def get_topic_if_user_has_access(topic_id):
     if users.user_id() == 0:
         return []
-    sql = "SELECT id, name, is_visible, is_hidden FROM topics WHERE id=:topic_id"
+    sql = "SELECT id, name, is_hidden FROM topics WHERE id=:topic_id AND is_visible=True"
     result1 = db.session.execute(sql, {"topic_id":topic_id}).fetchone()
     if not result1:
-        return []
-    if result1["is_visible"]==False:
         return []
     if users.is_admin():
         return result1

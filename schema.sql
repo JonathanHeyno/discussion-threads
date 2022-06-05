@@ -29,3 +29,12 @@ CREATE TABLE topic_access (
 );
 
 CREATE INDEX idx_topic_access_topics ON topic_access (topic_id);
+
+CREATE TABLE messages (
+	id SERIAL PRIMARY KEY,
+	content TEXT,
+	thread_id INTEGER REFERENCES threads,
+	creator_id INTEGER REFERENCES users,
+	is_visible BOOLEAN,
+	sent_at TIMESTAMP
+);

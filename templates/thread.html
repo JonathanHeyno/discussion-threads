@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Thread{% endblock %}
+{% block content %}
+<h2>Topic: {{ topic.name }}</h2>
+<h3>Thread: {{ thread.subject }}</h3>
+
+{% if message %}
+	<p class="error"> {{ message }} </p>
+{% endif %}
+
+<form action="/thread/{{ thread.id }}" method="POST">
+New Message: <textarea name="content" rows="3" cols="40"></textarea><br>
+<input type="submit" value="Send message"> <br>
+
+
+
+
+{% for message in messages %}
+<a href="/message/{{ message.id}}">{{ message.content }}</a><br>
+{% endfor %}
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endblock %}
