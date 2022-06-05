@@ -29,7 +29,7 @@ Currently you can:
 - Users can create new threads under topics
 - Users can post messages under threads
 
-##To be done
+## To be done
 Still missing functionalities
 - Users can search for messages containg a given string
 - Admins can remove topics
