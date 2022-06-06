@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Edit Thread{% endblock %}
+{% block content %}
+<h2>Topic: {{ topic.name }}</h2>
+
+{% if message %}
+	<p class="error"> {{ message }} </p>
+{% endif %}
+
+<form action="/thread/{{ thread.id }}" method="POST">
+<button type="submit" formaction="/delete_thread/{{ thread.id }}">Delete thread</button><br>
+Thread subject: <input type="text" name="subject", value="{{ thread.subject }}" size="40"><br>
+
+<button type="submit" formaction="/edit_thread/{{ thread.id }}">Save Changes</button><br>
+
+
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endblock %}

@@ -24,8 +24,14 @@ def list_threads(topic_id):
 def get_thread(thread_id):
     if users.user_id() == 0:
         return []
-    sql = "SELECT id, subject, topic_id FROM threads WHERE id=:thread_id AND is_visible=True"
+    sql = "SELECT id, subject, topic_id, creator_id FROM threads WHERE id=:thread_id AND is_visible=True"
     result = db.session.execute(sql, {"thread_id":thread_id}).fetchone()
     if not result:
         return []
     return result
+
+def edit(thread_id, subject):
+    sql = "UPDATE threads SET subject=:subject WHERE id=:thread_id RETURNING id, subject, topic_id, creator_id"
+    result = db.session.execute(sql, {"thread_id":thread_id, "subject":subject})
+    db.session.commit()
+    return result.fetchone()

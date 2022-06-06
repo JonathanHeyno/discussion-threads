@@ -4,11 +4,17 @@
 <h2>Topic: {{ topic.name }}</h2>
 <h3>Thread: {{ thread.subject }}</h3>
 
+
+<form action="/thread/{{ thread.id }}" method="POST">
+{% if is_creator %}
+	<button type="submit" formaction="/get_thread_for_editing/{{ thread.id }}">Edit Thread</button><br>
+{% endif %}
+
 {% if message %}
 	<p class="error"> {{ message }} </p>
 {% endif %}
 
-<form action="/thread/{{ thread.id }}" method="POST">
+
 New Message: <textarea name="content" rows="3" cols="40"></textarea><br>
 <input type="submit" value="Send message"> <br>
 

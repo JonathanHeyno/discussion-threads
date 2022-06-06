@@ -77,7 +77,7 @@ def edit_topic(topic_id):
     if users.user_id() == 0:
         return render_template("login.html", login_message="Not logged in")
     if not users.is_admin():
-        abort(401, description="Not an administrator")
+        abort(403, description="Not an administrator")
     topic = topics.get_topic_if_user_has_access(topic_id)
     if not topic:
         abort(404, description="Topic does not exist")
@@ -103,7 +103,7 @@ def topic(topic_id):
     if request.method == "GET":
         topic = topics.get_topic_if_user_has_access(topic_id)
         if not topic:
-            abort(401, description="Access to topic denied or topic does not exist")
+            abort(404, description="Access to topic denied or topic does not exist")
         return render_template("topic.html", topic=topic, threads=threads.list_threads(topic_id))
     if request.method == "POST":
         return redirect("/create_thread/"+str(topic_id))
@@ -114,7 +114,7 @@ def create_thread(topic_id):
         return render_template("login.html", login_message="Not logged in")
     topic = topics.get_topic_if_user_has_access(topic_id)
     if not topic:
-        abort(401, description="Access to topic denied or topic does not exist")
+        abort(404, description="Access to topic denied or topic does not exist")
     if request.method == "GET":
         return render_template("create_thread.html", topic=topic)
     if request.method == "POST":
@@ -130,14 +130,38 @@ def thread(thread_id):
         return render_template("login.html", login_message="Not logged in")
     thread = threads.get_thread(thread_id)
     if not thread:
-        abort(401, description="Thread does not exist")
+        abort(404, description="Thread does not exist")
     topic = topics.get_topic_if_user_has_access(thread["topic_id"])
     if not topic:
-        abort(401, description="Access denied")
+        abort(403, description="Access denied")
     if request.method == "GET":
-        return render_template("thread.html", topic=topic, thread=thread, messages=messages.list_messages(thread_id))
+        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id))
     if request.method == "POST":
         content = request.form["content"]
         if messages.new(content, thread_id):
-            return render_template("thread.html", topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Message sent")
-        return render_template("thread.html", topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Could not send message")
+            return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Message sent")
+        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Could not send message")
+
+@app.route("/get_thread_for_editing/<int:thread_id>", methods=["POST"])
+def get_thread_for_editing(thread_id):
+    return redirect("/edit_thread/"+str(thread_id))
+
+@app.route("/edit_thread/<int:thread_id>", methods=["GET", "POST"])
+def edit_thread(thread_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+    thread = threads.get_thread(thread_id)
+    if not thread:
+        abort(404, description="Thread does not exist")
+    if thread["creator_id"] != users.user_id():
+        abort(403, description="Access denied")
+    topic = topics.get_topic_if_user_has_access(thread["topic_id"])
+    if not topic:
+        abort(403, description="Access denied")
+    if request.method == "GET":
+        return render_template("edit_thread.html", topic=topic, thread=thread)
+    if request.method == "POST":
+        subject = request.form["subject"]
+        thread = threads.edit(thread_id, subject)
+        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Changes saved")
+    return render_template("edit_thread.html", topic=topic, thread=thread, message="Could not save changes")
