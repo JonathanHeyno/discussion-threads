@@ -22,7 +22,13 @@ New Message: <textarea name="content" rows="3" cols="40"></textarea><br>
 
 
 {% for message in messages %}
-<a href="/message/{{ message.id}}">{{ message.content }}</a><br>
+{{ message.username }}, {{ message.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}
+{% if message.is_creator %}
+	<a href="/edit_message/{{ message.id}}">Edit message</a>
+{% endif %}
+<br>
+{{ message.content }}<br>
+<br>
 {% endfor %}
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

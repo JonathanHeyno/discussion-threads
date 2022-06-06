@@ -155,13 +155,33 @@ def edit_thread(thread_id):
         abort(404, description="Thread does not exist")
     if thread["creator_id"] != users.user_id():
         abort(403, description="Access denied")
-    topic = topics.get_topic_if_user_has_access(thread["topic_id"])
-    if not topic:
-        abort(403, description="Access denied")
+    #topic = topics.get_topic_if_user_has_access(thread["topic_id"])
+    #if not topic:
+    #    abort(403, description="Access denied")
     if request.method == "GET":
-        return render_template("edit_thread.html", topic=topic, thread=thread)
+        return render_template("edit_thread.html", thread=thread)
     if request.method == "POST":
         subject = request.form["subject"]
         thread = threads.edit(thread_id, subject)
+        topic = topics.get_topic_if_user_has_access(thread["topic_id"])
         return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Changes saved")
-    return render_template("edit_thread.html", topic=topic, thread=thread, message="Could not save changes")
+    return render_template("edit_thread.html",  thread=thread, message="Could not save changes")
+
+@app.route("/edit_message/<int:message_id>", methods=["GET", "POST"])
+def edit_message(message_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+    message = messages.get_message(message_id)
+    if not message:
+        abort(404, description="Message does not exist")
+    if message["creator_id"] != users.user_id():
+        abort(403, description="Access denied")
+    if request.method == "GET":
+        return render_template("edit_message.html", message=message)
+    if request.method == "POST":
+        content = request.form["content"]
+        messages.edit(message_id, content)
+        thread = threads.get_thread(message["thread_id"])
+        topic = topics.get_topic_if_user_has_access(thread["topic_id"])
+        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(message["thread_id"]), message="Saved message")
+    return render_template("edit_message.html", message=message, error="Could not save changes")

@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Edit Message{% endblock %}
+{% block content %}
+<h2>Edit Message</h2>
+
+{% if error %}
+	<p class="error"> {{ error }} </p>
+{% endif %}
+
+<form action="/edit_message/{{ message.id }}" method="POST">
+<button type="submit" formaction="/delete_message/{{ message.id }}">Delete message</button><br>
+Message content: <input type="text" name="content", value="{{ message.content }}" size="40"><br>
+
+<button type="submit" formaction="/edit_message/{{ message.id }}">Save Changes</button><br>
+
+
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+{% endblock %}
