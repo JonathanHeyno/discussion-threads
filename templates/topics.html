@@ -13,11 +13,17 @@
 	<button type="submit" formaction="/topics">Create New Topic</button><br>
 	{% for topic in topic_list %}
 	<button type="submit" formaction="/get_topic_for_editing/{{ topic.id }}">Edit</button>
-	<a href="/topic/{{ topic.id }}">{{ topic.name }}</a><br>
+	<a href="/topic/{{ topic.id }}">{{ topic.name }}</a> {{ topic.count_threads }} {{ topic.count_messages}} 
+	{% if topic.latest_message %}
+			{{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+		{% endif %}<br>
 	{% endfor %}
 {% else %}
 	{% for topic in topic_list %}
-		<a href="/topic/{{ topic.id}}">{{ topic.name }}</a><br>
+		<a href="/topic/{{ topic.id}}">{{ topic.name }}</a> {{ topic.count_threads }} {{ topic.count_messages}} 
+		{% if topic.latest_message %}
+			{{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+		{% endif %}<br>
 	{% endfor %}
 {% endif %}
 

@@ -9,7 +9,10 @@ CREATE TABLE topics (
 	id SERIAL PRIMARY KEY,
 	name TEXT UNIQUE,
 	is_visible BOOLEAN,
-	is_hidden BOOLEAN
+	is_hidden BOOLEAN,
+	count_threads INTEGER,
+	count_messages INTEGER,
+	latest_message TIMESTAMP
 );
 
 CREATE INDEX idx_topic_name ON topics (name);
@@ -19,13 +22,16 @@ CREATE TABLE threads (
 	subject TEXT,
 	topic_id INTEGER REFERENCES topics,
 	creator_id INTEGER REFERENCES users,
-	is_visible BOOLEAN
+	is_visible BOOLEAN,
+	count_messages INTEGER,
+	latest_message TIMESTAMP
 );
 
 CREATE TABLE topic_access (
 	id SERIAL PRIMARY KEY,
 	topic_id INTEGER REFERENCES topics,
-	user_id INTEGER REFERENCES users
+	user_id INTEGER REFERENCES users,
+	UNIQUE(topic_id, user_id)
 );
 
 CREATE INDEX idx_topic_access_topics ON topic_access (topic_id);

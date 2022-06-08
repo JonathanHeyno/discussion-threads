@@ -5,7 +5,7 @@ def create(name, is_hidden, have_access):
     if users.user_id() == 0 or not users.is_admin():
         return False
     try:
-        sql = "INSERT INTO topics (name, is_visible, is_hidden) VALUES (:name,true,:is_hidden) RETURNING id"
+        sql = "INSERT INTO topics (name, is_visible, is_hidden, count_messages, count_threads) VALUES (:name,true,:is_hidden, 0, 0) RETURNING id"
         result = db.session.execute(sql, {"name":name, "is_hidden":is_hidden})
         topic_id = result.fetchone()[0]
         if is_hidden:
@@ -19,10 +19,11 @@ def create(name, is_hidden, have_access):
 
 def list_topics():
     if users.is_admin():
-        sql = "SELECT id, name FROM topics WHERE is_visible=True ORDER BY name"
+        sql = "SELECT id, name, count_threads, count_messages, latest_message FROM topics WHERE is_visible=True ORDER BY name"
         result = db.session.execute(sql)
     else:
-        sql = """SELECT DISTINCT t.id, t.name FROM topics t LEFT JOIN topic_access ta 
+        sql = """SELECT DISTINCT t.id, t.name, t.count_threads, t.count_messages, t.latest_message 
+        FROM topics t LEFT JOIN topic_access ta 
         ON t.id = ta.topic_id WHERE is_visible=True AND (is_hidden = False OR 
         ta.user_id = :user_id) ORDER BY t.name"""
         result = db.session.execute(sql, {"user_id":users.user_id()})
@@ -57,7 +58,7 @@ def topic_exists(topic_id):
 def get_topic_if_user_has_access(topic_id):
     if users.user_id() == 0:
         return []
-    sql = "SELECT id, name, is_hidden FROM topics WHERE id=:topic_id AND is_visible=True"
+    sql = "SELECT id, name, is_hidden, count_threads, count_messages, latest_message FROM topics WHERE id=:topic_id AND is_visible=True"
     result1 = db.session.execute(sql, {"topic_id":topic_id}).fetchone()
     if not result1:
         return []

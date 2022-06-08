@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Thread{% endblock %}
 {% block content %}
-<h2>Topic: {{ topic.name }}</h2>
+<h2><a href="/topics">Topics</a>: <a href="/topic/{{ topic.id}}">{{ topic.name }}</a></h2>
 <h3>Thread: {{ thread.subject }}</h3>
 
 

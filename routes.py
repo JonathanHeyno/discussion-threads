@@ -138,7 +138,8 @@ def thread(thread_id):
         return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id))
     if request.method == "POST":
         content = request.form["content"]
-        if messages.new(content, thread_id):
+        #if messages.new(content, thread_id):
+        if messages.create(thread_id, content):
             return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Message sent")
         return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Could not send message")
 

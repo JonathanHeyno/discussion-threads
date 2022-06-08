@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Topic{% endblock %}
 {% block content %}
-<h2>Topic: {{ topic.name }}</h2>
+<h2><a href="/topics">Topics</a>: {{ topic.name }}</h2>
 
 {% if message %}
 	<p class="error"> {{ message }} </p>
@@ -16,7 +16,10 @@
 Threads:<br>
 
 {% for thread in threads %}
-<a href="/thread/{{ thread.id}}">{{ thread.subject }}</a><br>
+<a href="/thread/{{ thread.id}}">{{ thread.subject }}</a> {{ thread.count_messages}} 
+{% if thread.latest_message %}
+	{{ thread.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+{% endif %}<br>
 {% endfor %}
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
