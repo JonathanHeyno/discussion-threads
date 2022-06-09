@@ -138,7 +138,6 @@ def thread(thread_id):
         return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id))
     if request.method == "POST":
         content = request.form["content"]
-        #if messages.new(content, thread_id):
         if messages.create(thread_id, content):
             return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Message sent")
         return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Could not send message")
@@ -156,9 +155,6 @@ def edit_thread(thread_id):
         abort(404, description="Thread does not exist")
     if thread["creator_id"] != users.user_id():
         abort(403, description="Access denied")
-    #topic = topics.get_topic_if_user_has_access(thread["topic_id"])
-    #if not topic:
-    #    abort(403, description="Access denied")
     if request.method == "GET":
         return render_template("edit_thread.html", thread=thread)
     if request.method == "POST":
@@ -186,3 +182,39 @@ def edit_message(message_id):
         topic = topics.get_topic_if_user_has_access(thread["topic_id"])
         return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(message["thread_id"]), message="Saved message")
     return render_template("edit_message.html", message=message, error="Could not save changes")
+
+@app.route("/delete_message/<int:message_id>", methods=["POST"])
+def delete_message(message_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+    message = messages.get_message(message_id)
+    if not message:
+        abort(404, description="Message does not exist")
+    if message["creator_id"] != users.user_id():
+        abort(403, description="Access denied")
+
+    topic, thread = messages.delete(message_id)
+    return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(message["thread_id"]), message="Message deleted")
+
+@app.route("/delete_thread/<int:thread_id>", methods=["POST"])
+def delete_thread(thread_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+    thread = threads.get_thread(thread_id)
+    if not thread:
+        abort(404, description="Thread does not exist")
+    if thread["creator_id"] != users.user_id():
+        abort(403, description="Access denied")
+
+    topic = threads.delete(thread_id)
+    return render_template("topic.html", topic=topic, threads=threads.list_threads(topic["id"]), message="Thread deleted")
+
+@app.route("/delete_topic/<int:topic_id>", methods=["POST"])
+def delete_topic(topic_id):
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+    if not users.is_admin():
+        abort(403, description="Not an administrator")
+
+    topics.delete(topic_id)
+    return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Topic deleted")

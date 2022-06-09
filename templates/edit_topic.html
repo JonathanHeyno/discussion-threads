@@ -6,6 +6,8 @@
 
 <form action="/edit_topic/{{ topic.id }}" method="POST">
 
+<button type="submit" formaction="/delete_topic/{{ topic.id }}">Delete topic</button><br>
+
 <input type="submit" value="Save Changes"> <br>
 
 Topic name: <input type="text" name="name", value="{{ topic.name }}" size="40"><br>
@@ -19,6 +21,7 @@ Hidden:
 
 
 For a topic that is or will be hidden:<br>
+
 Remove access from following users (admins will always have access):<br>
 
 {% for user in user_accesses %}

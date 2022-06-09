@@ -52,3 +52,40 @@ def edit(message_id, content):
     sql = "UPDATE messages SET content=:content WHERE id=:message_id"
     db.session.execute(sql, {"message_id":message_id, "content":content})
     db.session.commit()
+
+def delete(message_id):
+    sql = "UPDATE messages SET is_visible=False WHERE id=:message_id RETURNING thread_id, sent_at"
+    result = db.session.execute(sql, {"message_id":message_id})
+    row = result.fetchone()
+    thread_id = row[0]
+    sent_at = row[1]
+
+    sql2 = """
+    UPDATE threads SET count_messages=count_messages-1, latest_message=
+        CASE 
+            WHEN latest_message =:sent_at THEN
+                (SELECT MAX(sent_at) FROM messages WHERE thread_id=:thread_id AND is_visible=True)
+            ELSE 
+                latest_message 
+        END
+    WHERE id=:thread_id RETURNING id, subject, topic_id, creator_id, count_messages, latest_message
+    """
+    result2 = db.session.execute(sql2, {"thread_id":thread_id, "sent_at":sent_at})
+    thread = result2.fetchone()
+
+
+    sql3 = """
+    UPDATE topics SET count_messages=count_messages-1, latest_message=
+        CASE 
+            WHEN latest_message =:sent_at THEN
+                (SELECT MAX(latest_message) FROM threads WHERE topic_id=:topic_id AND is_visible=True)
+            ELSE 
+                latest_message 
+        END
+    WHERE id=:topic_id RETURNING id, name, is_hidden, count_threads, count_messages, latest_message
+    """
+    result3 = db.session.execute(sql3, {"topic_id":thread["topic_id"], "sent_at":sent_at})
+    topic = result3.fetchone()
+
+    db.session.commit()
+    return topic, thread

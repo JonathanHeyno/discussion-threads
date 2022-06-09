@@ -71,3 +71,15 @@ def get_topic_if_user_has_access(topic_id):
     if result2:
         return result1
     return []
+
+def delete(topic_id):
+    sql = "UPDATE topics SET is_visible=False, count_threads=0, count_messages=0, latest_message=NULL WHERE id=:topic_id"
+    db.session.execute(sql, {"topic_id":topic_id})
+    
+    sql2="""UPDATE threads SET count_messages=0, latest_message=NULL, is_visible=False WHERE topic_id=:topic_id"""
+    db.session.execute(sql2, {"topic_id":topic_id})
+
+    sql3 = "UPDATE messages SET is_visible=False WHERE thread_id IN (SELECT DISTINCT id FROM threads WHERE topic_id=:topic_id)"
+    db.session.execute(sql3, {"topic_id":topic_id})
+
+    db.session.commit()
