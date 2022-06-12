@@ -192,7 +192,6 @@ def delete_message(message_id):
         abort(404, description="Message does not exist")
     if message["creator_id"] != users.user_id():
         abort(403, description="Access denied")
-
     topic, thread = messages.delete(message_id)
     return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(message["thread_id"]), message="Message deleted")
 
@@ -205,7 +204,6 @@ def delete_thread(thread_id):
         abort(404, description="Thread does not exist")
     if thread["creator_id"] != users.user_id():
         abort(403, description="Access denied")
-
     topic = threads.delete(thread_id)
     return render_template("topic.html", topic=topic, threads=threads.list_threads(topic["id"]), message="Thread deleted")
 
@@ -215,6 +213,40 @@ def delete_topic(topic_id):
         return render_template("login.html", login_message="Not logged in")
     if not users.is_admin():
         abort(403, description="Not an administrator")
-
     topics.delete(topic_id)
     return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Topic deleted")
+
+@app.route("/search")
+def search():
+    if users.user_id() == 0:
+        return render_template("login.html", login_message="Not logged in")
+
+    args = request.args
+    query = args.get("query", default="", type=str)
+    search_topics = args.get("search_topics", default=False, type=bool)
+    search_threads = args.get("search_threads", default=False, type=bool)
+    search_messages = args.get("search_messages", default=False, type=bool)
+
+    if not query:
+        return render_template( "search.html", search_topics=True, search_threads=True, search_messages=True,)
+
+    topics_found = []
+    if search_topics:
+        topics_found = topics.search(query)
+
+    threads_found = []
+    if search_threads:
+        threads_found = threads.search(query)
+
+    messages_found = []
+    if search_messages:
+        messages_found = messages.search(query)
+
+    return render_template( "search.html",
+                            query=query,
+                            search_topics=search_topics,
+                            search_threads=search_threads,
+                            search_messages=search_messages,
+                            topics=topics_found,
+                            threads=threads_found,
+                            messages=messages_found)

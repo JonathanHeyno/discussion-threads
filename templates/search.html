@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h2>Search</h2>
+
+
+<form action="/search" method="GET">
+
+Search for:
+
+Topics 
+{% if search_topics %}
+	<input type="checkbox" name="search_topics" value="True" checked> 
+{% else %}
+<input type="checkbox" name="search_topics" value="True"> 
+{% endif %}
+
+
+Threads 
+{% if search_threads %}
+	<input type="checkbox" name="search_threads" value="True" checked> 
+{% else %}
+<input type="checkbox" name="search_threads" value="True"> 
+{% endif %}
+
+
+
+Messages 
+{% if search_messages %}
+	<input type="checkbox" name="search_messages" value="True" checked> 
+{% else %}
+<input type="checkbox" name="search_messages" value="True"> 
+{% endif %}
+<br><br>
+
+Containing:
+<textarea name="query" rows="2" cols="40">{{ query }}</textarea><br>
+
+
+<input type="submit" value="Search"> <br>
+
+</form>
+
+{% if topics or threads or messages %}
+Results:<br>
+{% endif %}
+
+{% if topics %}
+	Topics:<br>
+
+	{% for topic in topics %}
+		<a href="/topic/{{ topic.id}}">{{ topic.name }}</a> {{ topic.count_threads }} {{ topic.count_messages}} 
+		{% if topic.latest_message %}
+			{{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+		{% endif %}<br>
+	{% endfor %}
+{% endif %}
+
+
+
+
+{% if threads %}
+	Threads:<br>
+
+	{% for thread in threads %}
+	<a href="/thread/{{ thread.id}}">{{ thread.subject }}</a> {{ thread.count_messages}} 
+	{% if thread.latest_message %}
+		{{ thread.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+	{% endif %}<br>
+	{% endfor %}
+{% endif %}
+
+
+
+{% if messages %}
+Messages:<br>
+
+	{% for message in messages %}
+		{{ message.username }}, {{ message.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}
+		{% if message.is_creator %}
+			<a href="/edit_message/{{ message.id}}">Edit message</a>
+		{% endif %}
+		<br>
+		{{ message.content }}<br>
+		<br>
+	{% endfor %}
+{% endif %}
+
+
+
+{% endblock %}
