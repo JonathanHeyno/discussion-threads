@@ -9,7 +9,7 @@
 	<p class="error"> {{ message }} </p>
 {% endif %}
 
-<form action="/create_thread/{{ topic.id }}" method="POST">
+<form action="/create_thread/{{ topic.id }}" method="POST" onsubmit="return check(this)">
 
 Thread name: <textarea name="subject" rows="2" cols="40"></textarea><br>
 Message: <textarea name="message" rows="3" cols="40"></textarea><br>
@@ -20,4 +20,24 @@ Message: <textarea name="message" rows="3" cols="40"></textarea><br>
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
+
+
+<script>
+function check(form) {
+    if (form.subject.value.length == 0) {
+        alert("Topic cannot be empty");
+        return false;
+    }
+    if (form.subject.value.length > 250) {
+        alert("Subject too long (max 250 characters)");
+        return false;
+    }
+	if (form.message.value.length > 500) {
+        alert("Message too long (max 500 characters)");
+        return false;
+    }
+    return true;
+}
+</script>
+
 {% endblock %}

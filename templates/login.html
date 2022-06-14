@@ -3,18 +3,28 @@
 {% block content %}
 <h2>Login</h2>
 
-<form action="/login" method="POST">
-User name: <input type="text" name="username"> <br>
-Password: <input type="password" name="password"> <br>
+<input id='login_or_create' type="hidden" name="login_or_create" value="login">
 
-<button type="submit">Login</button>
+<form action="/login" method="POST" onsubmit="return check(this)">
+
+User name: <input type="text" name="username" placeholder="name" maxlength="50"> <br>
+Password: <input type="password" name="password" placeholder="••••" maxlength="50"> <br>
+
+<button type="submit" onclick="change_to_login(this)">Login</button>
 {% if login_message %}
 	<p class="error"> {{ login_message }} </p>
 {% endif %}
 <br>
-Retype password: <input type="password" name="password2"> <br>
-Create as admin account: <input type="checkbox" name="is_admin" value="Y"> <br>
-<button type="submit" formaction="/register">Create</button>
+Retype password: <input type="password" name="password2" maxlength="50"> <br>
+
+
+<label for="is_admin">
+		Create as admin account: <input type="checkbox"  id="is_admin" name="is_admin" value="Y">  
+</label>
+<br>
+
+
+<button type="submit" formaction="/register" onclick="change_to_create(this)">Create</button>
 {% if register_message %}
 	<p class="error"> {{ register_message }} </p>
 {% endif %}
@@ -22,17 +32,43 @@ Create as admin account: <input type="checkbox" name="is_admin" value="Y"> <br>
 </form>
 
 
-
-
-
-
-<!-- 
 <script>
-	{% if alert_message %}
-		alert("Incorrect username or password");
-	{% endif %}
+function check(form) {
+    if (form.username.value.length == 0) {
+        alert("Username cannot be empty");
+        return false;
+    }
+    if (form.username.value.length > 50) {
+        alert("Username too long (max 50 characters)");
+        return false;
+    }
+	if (form.password.value.length == 0) {
+        alert("Password cannot be empty");
+        return false;
+    }
+	if (form.password.value.length > 50) {
+        alert("Password too long (max 50 characters)");
+        return false;
+    }
+	if (document.getElementById("login_or_create").value == "create" && form.password.value != form.password2.value) {
+        alert("Passwords differ");
+        return false;
+    }
+    return true;
+}
 </script>
--->
+
+<script>
+function change_to_login(form) {
+    document.getElementById("login_or_create").value = "login";
+}
+</script>
+
+<script>
+function change_to_create(form) {
+    document.getElementById("login_or_create").value = "create";
+}
+</script>
 
 
 {% endblock %}

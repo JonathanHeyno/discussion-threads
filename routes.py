@@ -63,12 +63,18 @@ def create_topic():
         return render_template("create_topic.html", users=userslist)
     if request.method == "POST":
         name = request.form["name"]
+        if not _check_user_input(name, 1, 250):
+            userslist=users.get_users()
+            return render_template("create_topic.html", 
+                                    message="Topic name must be between 1 and 250 characters", 
+                                    users=userslist)
         is_hidden = False
         if request.form.getlist("is_hidden"):
             is_hidden = True
         have_access = request.form.getlist("have_access")
         if topics.create(name, is_hidden, have_access):
-            return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Topic created")
+            return render_template("topics.html", is_admin=users.is_admin(), 
+                                    topic_list=topics.list_topics(), message="Topic created")
     userslist=users.get_users()
     return render_template("create_topic.html", message="Could not create topic", users=userslist)
 
@@ -83,17 +89,28 @@ def edit_topic(topic_id):
         abort(404, description="Topic does not exist")
     if request.method == "GET":
         return render_template("edit_topic.html", topic=topic,
-        user_accesses=topics.get_users_and_access_rights(topic_id))
+            user_accesses=topics.get_users_and_access_rights(topic_id))
     if request.method == "POST":
         name = request.form["name"]
+        if not _check_user_input(name, 1, 250):
+            return render_template("topics.html", 
+                                    is_admin=users.is_admin(), 
+                                    topic_list=topics.list_topics(), 
+                                    message="Topic name must be between 1 and 250 characters")
         is_hidden = False
         if request.form.getlist("is_hidden"):
             is_hidden = True
         revoke_access = request.form.getlist("revoke_access")
         grant_access = request.form.getlist("grant_access")
         topics.edit(topic_id, name, is_hidden, revoke_access, grant_access)
-        return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Saved changes to topic")
-    return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Could not save changes to topic")
+        return render_template("topics.html", 
+                                is_admin=users.is_admin(), 
+                                topic_list=topics.list_topics(), 
+                                message="Saved changes to topic")
+    return render_template("topics.html", 
+                            is_admin=users.is_admin(), 
+                            topic_list=topics.list_topics(), 
+                            message="Could not save changes to topic")
 
 
 @app.route("/topic/<int:topic_id>", methods=["GET", "POST"])
@@ -119,9 +136,20 @@ def create_thread(topic_id):
         return render_template("create_thread.html", topic=topic)
     if request.method == "POST":
         subject = request.form["subject"]
+        if not _check_user_input(subject, 1, 250):
+            return render_template("create_thread.html", 
+                                    topic=topic, 
+                                    message="Subject must be between 1 and 250 characters")
         message = request.form["message"]
+        if not _check_user_input(message, 0, 500):
+            return render_template("create_thread.html", 
+                                    topic=topic, 
+                                    message="Message must be between 1 and 500 characters")
         if threads.create(subject, topic_id, message):
-            return render_template("topic.html", topic=topic, threads=threads.list_threads(topic_id), message="Thread created")
+            return render_template("topic.html", 
+                                    topic=topic, 
+                                    threads=threads.list_threads(topic_id), 
+                                    message="Thread created")
     return render_template("create_thread.html", topic=topic, message="Could not create thread")
 
 @app.route("/thread/<int:thread_id>", methods=["GET", "POST"])
@@ -135,12 +163,33 @@ def thread(thread_id):
     if not topic:
         abort(403, description="Access denied")
     if request.method == "GET":
-        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id))
+        return render_template("thread.html", 
+                                is_creator=thread["creator_id"]==users.user_id(), 
+                                topic=topic, 
+                                thread=thread, 
+                                messages=messages.list_messages(thread_id))
     if request.method == "POST":
         content = request.form["content"]
+        if not _check_user_input(content, 1, 500):
+            return render_template("thread.html", 
+                                    is_creator=thread["creator_id"]==users.user_id(), 
+                                    topic=topic, 
+                                    thread=thread, 
+                                    messages=messages.list_messages(thread_id), 
+                                    message="Message must be between 1 and 500 characters")
         if messages.create(thread_id, content):
-            return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Message sent")
-        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Could not send message")
+            return render_template("thread.html", 
+                                    is_creator=thread["creator_id"]==users.user_id(), 
+                                    topic=topic, 
+                                    thread=thread, 
+                                    messages=messages.list_messages(thread_id), 
+                                    message="Message sent")
+        return render_template("thread.html", 
+                                is_creator=thread["creator_id"]==users.user_id(), 
+                                topic=topic, 
+                                thread=thread, 
+                                messages=messages.list_messages(thread_id), 
+                                message="Could not send message")
 
 @app.route("/get_thread_for_editing/<int:thread_id>", methods=["POST"])
 def get_thread_for_editing(thread_id):
@@ -159,9 +208,18 @@ def edit_thread(thread_id):
         return render_template("edit_thread.html", thread=thread)
     if request.method == "POST":
         subject = request.form["subject"]
+        if not _check_user_input(subject, 1, 250):
+            return render_template("edit_thread.html",  
+                                    thread=thread, 
+                                    message="Subject must be between 1 and 250 characters")
         thread = threads.edit(thread_id, subject)
         topic = topics.get_topic_if_user_has_access(thread["topic_id"])
-        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(thread_id), message="Changes saved")
+        return render_template("thread.html", 
+                                is_creator=thread["creator_id"]==users.user_id(), 
+                                topic=topic, 
+                                thread=thread, 
+                                messages=messages.list_messages(thread_id), 
+                                message="Changes saved")
     return render_template("edit_thread.html",  thread=thread, message="Could not save changes")
 
 @app.route("/edit_message/<int:message_id>", methods=["GET", "POST"])
@@ -177,10 +235,19 @@ def edit_message(message_id):
         return render_template("edit_message.html", message=message)
     if request.method == "POST":
         content = request.form["content"]
+        if not _check_user_input(content, 1, 500):
+            return render_template("edit_message.html", 
+                                    message=message, 
+                                    error="Message must be between 1 and 500 characters")
         messages.edit(message_id, content)
         thread = threads.get_thread(message["thread_id"])
         topic = topics.get_topic_if_user_has_access(thread["topic_id"])
-        return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(message["thread_id"]), message="Saved message")
+        return render_template("thread.html", 
+                                is_creator=thread["creator_id"]==users.user_id(), 
+                                topic=topic, 
+                                thread=thread, 
+                                messages=messages.list_messages(message["thread_id"]), 
+                                message="Saved message")
     return render_template("edit_message.html", message=message, error="Could not save changes")
 
 @app.route("/delete_message/<int:message_id>", methods=["POST"])
@@ -193,7 +260,12 @@ def delete_message(message_id):
     if message["creator_id"] != users.user_id():
         abort(403, description="Access denied")
     topic, thread = messages.delete(message_id)
-    return render_template("thread.html", is_creator=thread["creator_id"]==users.user_id(), topic=topic, thread=thread, messages=messages.list_messages(message["thread_id"]), message="Message deleted")
+    return render_template("thread.html", 
+                            is_creator=thread["creator_id"]==users.user_id(), 
+                            topic=topic, 
+                            thread=thread, 
+                            messages=messages.list_messages(message["thread_id"]), 
+                            message="Message deleted")
 
 @app.route("/delete_thread/<int:thread_id>", methods=["POST"])
 def delete_thread(thread_id):
@@ -205,7 +277,10 @@ def delete_thread(thread_id):
     if thread["creator_id"] != users.user_id():
         abort(403, description="Access denied")
     topic = threads.delete(thread_id)
-    return render_template("topic.html", topic=topic, threads=threads.list_threads(topic["id"]), message="Thread deleted")
+    return render_template("topic.html", 
+                            topic=topic, 
+                            threads=threads.list_threads(topic["id"]), 
+                            message="Thread deleted")
 
 @app.route("/delete_topic/<int:topic_id>", methods=["POST"])
 def delete_topic(topic_id):
@@ -214,7 +289,10 @@ def delete_topic(topic_id):
     if not users.is_admin():
         abort(403, description="Not an administrator")
     topics.delete(topic_id)
-    return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics(), message="Topic deleted")
+    return render_template("topics.html", 
+                            is_admin=users.is_admin(), 
+                            topic_list=topics.list_topics(), 
+                            message="Topic deleted")
 
 @app.route("/search")
 def search():
@@ -228,7 +306,17 @@ def search():
     search_messages = args.get("search_messages", default=False, type=bool)
 
     if not query:
-        return render_template( "search.html", search_topics=True, search_threads=True, search_messages=True,)
+        return render_template("search.html", 
+                                search_topics=True,
+                                search_threads=True, 
+                                search_messages=True)
+
+    if not _check_user_input(query, 1, 1000):
+            return render_template( "search.html", 
+                                    search_topics=search_topics, 
+                                    search_threads=search_threads, 
+                                    search_messages=search_messages, 
+                                    error_message="Search string too long")
 
     topics_found = []
     if search_topics:
@@ -250,3 +338,9 @@ def search():
                             topics=topics_found,
                             threads=threads_found,
                             messages=messages_found)
+
+def _check_user_input(user_input, minlength, maxlength):
+    input_length = len(user_input)
+    if input_length < minlength or input_length > maxlength:
+        return False
+    return True

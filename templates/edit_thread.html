@@ -7,14 +7,45 @@
 	<p class="error"> {{ message }} </p>
 {% endif %}
 
-<form action="/thread/{{ thread.id }}" method="POST">
-<button type="submit" formaction="/delete_thread/{{ thread.id }}">Delete thread</button><br>
-Thread subject: <input type="text" name="subject", value="{{ thread.subject }}" size="40"><br>
+<input id='save_or_delete' type="hidden" name="save_or_delete" value="save">
 
-<button type="submit" formaction="/edit_thread/{{ thread.id }}">Save Changes</button><br>
+<form action="/thread/{{ thread.id }}" method="POST" onsubmit="return check(this)">
+<button type="submit" formaction="/delete_thread/{{ thread.id }}" onclick="change_to_delete(this)">Delete thread</button><br>
+Thread subject: <textarea name="subject" rows="2" cols="40">{{ thread.subject }}</textarea><br>
+
+<button type="submit" formaction="/edit_thread/{{ thread.id }}" onclick="change_to_save(this)">Save Changes</button><br>
 
 
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
+
+
+<script>
+function check(form) {
+    if (document.getElementById("save_or_delete").value == "save" && form.subject.value.length == 0) {
+        alert("Subject cannot be empty");
+        return false;
+    }
+    if (document.getElementById("save_or_delete").value == "save" && form.subject.value.length > 250) {
+        alert("Subject too long (max 250 characters)");
+        return false;
+    }
+    return true;
+}
+</script>
+
+
+<script>
+function change_to_save(form) {
+    document.getElementById("save_or_delete").value = "save";
+}
+</script>
+
+<script>
+function change_to_delete(form) {
+    document.getElementById("save_or_delete").value = "delete";
+}
+</script>
+
 {% endblock %}

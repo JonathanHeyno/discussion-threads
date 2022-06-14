@@ -7,9 +7,9 @@
 	<p class="error"> {{ error }} </p>
 {% endif %}
 
-<form action="/edit_message/{{ message.id }}" method="POST">
+<form action="/edit_message/{{ message.id }}" method="POST" onsubmit="return check(this)">
 <button type="submit" formaction="/delete_message/{{ message.id }}">Delete message</button><br>
-Message content: <input type="text" name="content", value="{{ message.content }}" size="40"><br>
+Message content: <textarea name="content" rows="3" cols="40">{{ message.content }}</textarea><br>
 
 <button type="submit" formaction="/edit_message/{{ message.id }}">Save Changes</button><br>
 
@@ -17,4 +17,20 @@ Message content: <input type="text" name="content", value="{{ message.content }}
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
+
+
+<script>
+function check(form) {
+    if (form.content.value.length == 0) {
+        alert("Message cannot be empty");
+        return false;
+    }
+    if (form.content.value.length > 500) {
+        alert("Message too long (max 500 characters)");
+        return false;
+    }
+    return true;
+}
+</script>
+
 {% endblock %}

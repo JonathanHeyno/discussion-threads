@@ -3,20 +3,29 @@
 {% block content %}
 <h2>Edit Topic</h2>
 
+<input id='save_or_delete' type="hidden" name="save_or_delete" value="save">
 
-<form action="/edit_topic/{{ topic.id }}" method="POST">
+<form action="/edit_topic/{{ topic.id }}" method="POST" onsubmit="return check(this)">
 
-<button type="submit" formaction="/delete_topic/{{ topic.id }}">Delete topic</button><br>
+<button type="submit" formaction="/delete_topic/{{ topic.id }}" onclick="change_to_delete(this)">Delete topic</button><br>
 
-<input type="submit" value="Save Changes"> <br>
+<input type="submit" value="Save Changes" onclick="change_to_save(this)"> <br>
 
 Topic name: <input type="text" name="name", value="{{ topic.name }}" size="40"><br>
 
-Hidden:
+
 {% if topic.is_hidden %}
-	<input type="checkbox" name="is_hidden" value="Y" checked> <br>
+	<label for="is_hidden">
+		Hidden: <input type="checkbox" id="is_hidden" name="is_hidden" value="Y" checked>  
+	</label>
+<br>
+
+
 {% else %}
-<input type="checkbox" name="is_hidden" value="Y"> <br>
+	<label for="is_hidden">
+		Hidden: <input type="checkbox" id="is_hidden" name="is_hidden" value="Y">  
+	</label>
+<br>
 {% endif %}
 
 
@@ -26,7 +35,10 @@ Remove access from following users (admins will always have access):<br>
 
 {% for user in user_accesses %}
 	{% if user.has_access %}
-		<input type="checkbox" name="revoke_access" value= {{ user.id }}> {{ user.username }}<br>
+	<label for="revoke_access">
+		<input type="checkbox" id="revoke_access" name="revoke_access" value={{ user.id }}> {{ user.username }}
+	</label>
+	<br>
 	{% endif %}
 {% endfor %}
 
@@ -35,11 +47,42 @@ Grant access for following users:<br>
 
 {% for user in user_accesses %}
 	{% if not user.has_access %}
-		<input type="checkbox" name="grant_access" value= {{ user.id }}> {{ user.username }}<br>
+		<label for="grant_access">
+		<input type="checkbox" id="grant_access" name="grant_access" value={{ user.id }}> {{ user.username }}
+		</label>
+		<br>
 	{% endif %}
 {% endfor %}
 
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
+
+
+<script>
+function check(form) {
+    if (document.getElementById("save_or_delete").value == "save" && form.name.value.length == 0) {
+        alert("Topic cannot be empty");
+        return false;
+    }
+    if (document.getElementById("save_or_delete").value == "save" && form.name.value.length > 250) {
+        alert("Topic too long (max 250 characters)");
+        return false;
+    }
+    return true;
+}
+</script>
+
+<script>
+function change_to_save(form) {
+    document.getElementById("save_or_delete").value = "save";
+}
+</script>
+
+<script>
+function change_to_delete(form) {
+    document.getElementById("save_or_delete").value = "delete";
+}
+</script>
+
 {% endblock %}

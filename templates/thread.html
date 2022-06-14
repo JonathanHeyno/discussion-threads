@@ -5,9 +5,11 @@
 <h3>Thread: {{ thread.subject }}</h3>
 
 
-<form action="/thread/{{ thread.id }}" method="POST">
+<input id='edit_or_send' type="hidden" name="edit_or_send" value="send">
+
+<form action="/thread/{{ thread.id }}" method="POST" onsubmit="return check(this)">
 {% if is_creator %}
-	<button type="submit" formaction="/get_thread_for_editing/{{ thread.id }}">Edit Thread</button><br>
+	<button type="submit" formaction="/get_thread_for_editing/{{ thread.id }}" onclick="change_to_edit(this)">Edit Thread</button><br>
 {% endif %}
 
 {% if message %}
@@ -16,7 +18,7 @@
 
 
 New Message: <textarea name="content" rows="3" cols="40"></textarea><br>
-<input type="submit" value="Send message"> <br>
+<input type="submit" value="Send message" onclick="change_to_send(this)"> <br>
 
 
 
@@ -33,4 +35,32 @@ New Message: <textarea name="content" rows="3" cols="40"></textarea><br>
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
+
+
+<script>
+function check(form) {
+    if (document.getElementById("edit_or_send").value == "send" && form.content.value.length == 0) {
+        alert("Message cannot be empty");
+        return false;
+    }
+    if (document.getElementById("edit_or_send").value == "send" && form.content.value.length > 500) {
+        alert("Message too long (max 500 characters)");
+        return false;
+    }
+    return true;
+}
+</script>
+
+<script>
+function change_to_send(form) {
+    document.getElementById("edit_or_send").value = "send";
+}
+</script>
+
+<script>
+function change_to_edit(form) {
+    document.getElementById("edit_or_send").value = "edit";
+}
+</script>
+
 {% endblock %}

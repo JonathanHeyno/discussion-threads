@@ -7,21 +7,43 @@
 	<p class="error"> {{ message }} </p>
 {% endif %}
 
-<form action="/create_topic" method="POST">
+<form action="/create_topic" method="POST" onsubmit="return check(this)">
 
 Topic name: <input type="text" name="name", size="40">
 <input type="submit" value="Create"> <br>
-Hidden: <input type="checkbox" name="is_hidden" value="Y"> <br>
 
+<label for="is_hidden">
+	Hidden: <input type="checkbox" id="is_hidden" name="is_hidden" value="Y">  
+</label>
+<br>
 
 <label for="users">If topic is hidden, select users who should have access:</label><br>
 
 
 
 {% for user in users %}
-<input type="checkbox" name="have_access" value= {{ user.id }}> {{ user.username }}<br>
+	<label for="have_access">
+		<input type="checkbox" id="have_access" name="have_access" value={{ user.id }}> {{ user.username }}
+	</label>
+	<br>
 {% endfor %}
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
+
+
+<script>
+function check(form) {
+    if (form.name.value.length == 0) {
+        alert("Topic cannot be empty");
+        return false;
+    }
+    if (form.name.value.length > 250) {
+        alert("Topic too long (max 250 characters)");
+        return false;
+    }
+    return true;
+}
+</script>
+
 {% endblock %}

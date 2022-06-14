@@ -3,33 +3,47 @@
 {% block content %}
 <h2>Search</h2>
 
+{% if error_message %}
+	<p class="error"> {{ error_message }} </p>
+{% endif %}
 
-<form action="/search" method="GET">
+<form action="/search" method="GET" onsubmit="return check(this)">
 
 Search for:
 
-Topics 
+
 {% if search_topics %}
-	<input type="checkbox" name="search_topics" value="True" checked> 
+	<label for="search_topics">
+		Topics <input type="checkbox" id="search_topics" name="search_topics" value="True" checked>   
+	</label>
 {% else %}
-<input type="checkbox" name="search_topics" value="True"> 
+	<label for="search_topics">
+		Topics <input type="checkbox" id="search_topics" name="search_topics" value="True">   
+	</label>
 {% endif %}
 
 
-Threads 
+
 {% if search_threads %}
-	<input type="checkbox" name="search_threads" value="True" checked> 
+	<label for="search_threads">
+		Threads <input type="checkbox" id="search_threads" name="search_threads" value="True" checked>  
+	</label>
 {% else %}
-<input type="checkbox" name="search_threads" value="True"> 
+	<label for="search_threads">
+		Threads <input type="checkbox" id="search_threads" name="search_threads" value="True">  
+	</label>
 {% endif %}
 
 
 
-Messages 
 {% if search_messages %}
-	<input type="checkbox" name="search_messages" value="True" checked> 
+	<label for="search_messages">
+		Messages <input type="checkbox" id="search_messages" name="search_messages" value="True" checked>  
+	</label>
 {% else %}
-<input type="checkbox" name="search_messages" value="True"> 
+	<label for="search_messages">
+		Messages <input type="checkbox" id="search_messages" name="search_messages" value="True">  
+	</label>
 {% endif %}
 <br><br>
 
@@ -87,5 +101,23 @@ Messages:<br>
 {% endif %}
 
 
+
+<script>
+function check(form) {
+	if (document.querySelector('#search_topics').checked == false && document.querySelector('#search_threads').checked == false && document.querySelector('#search_messages').checked == false) {
+		alert("Pick at least one category to search (topics, threads or messages)");
+        return false;
+    }
+    if (form.query.value.length == 0) {
+        alert("Search string cannot be empty");
+        return false;
+    }
+    if (form.query.value.length > 1000) {
+        alert("Search string too long");
+        return false;
+    }
+    return true;
+}
+</script>
 
 {% endblock %}
