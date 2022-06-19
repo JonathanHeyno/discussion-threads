@@ -2,20 +2,51 @@
 <html>
 <head>
 	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Discussion Threads - {% block title %}{% endblock %}</title>
 </head>
 <body>
-	<h1>Discussion Threads</h1>
-	  <nav>
-    <ul>
-      <li><a href="/topics">Topics</a></li>
-      <li><a href="/search?&search_topics=True&search_threads=True&search_messages=True">Search</a></li>
-      <li><a href="/logout">Logout</a></li>
-    </ul>
-  </nav>
-	<hr>
-	{% block content %}{% endblock %}
-	<hr>
+	<nav class="header">
+		<div class="two">
+			<a class="link_class" href="/topics">
+				<div class="topics">
+					Topics
+				</div>
+			</a>
+			{% if topic is defined %}
+			<a class="link_class" href="/topic/{{ topic.id}}">
+				<div class="threads">
+					Threads
+				</div>
+			</a>
+			{% endif %}
+		</div>
+	</nav>
+	<nav class="sidebar">
+		<div class="nav-options">
+			
+			<a href="/search?&search_topics=True&search_threads=True&search_messages=True">
+				<button type="submit" value="Search" class="nav-button">
+					<img src='/static/search.png' class="search-icon">
+					<div class="tooltip">Search</div>
+				</button></a>
+				
+		</div>
+		<div class="nav-options">
+			
+			<a href="/logout">
+				<button type="submit" value="Logout" class="nav-button">
+					<img src='/static/logout.png' class="search-icon">
+					<div class="tooltip">Logout</div>
+				</button></a>
+				
+		</div>
+	</nav>
+	<main>
+		{% block content %}{% endblock %}
+	</main>
+	
+
 </body>
 </html>

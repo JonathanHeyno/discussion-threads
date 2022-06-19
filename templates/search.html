@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Search{% endblock %}
 {% block content %}
-<h2>Search</h2>
+<h2>Search</h2><br>
 
 {% if error_message %}
 	<p class="error"> {{ error_message }} </p>
@@ -13,60 +13,70 @@ Search for:
 
 
 {% if search_topics %}
-	<label for="search_topics">
-		Topics <input type="checkbox" id="search_topics" name="search_topics" value="True" checked>   
+	<label for="search_topics" class="search-category">
+		Topics <input type="checkbox" class="checkbox" id="search_topics" name="search_topics" value="True" checked>   
 	</label>
 {% else %}
-	<label for="search_topics">
-		Topics <input type="checkbox" id="search_topics" name="search_topics" value="True">   
+	<label for="search_topics" class="search-category">
+		Topics <input type="checkbox" class="checkbox" id="search_topics" name="search_topics" value="True">   
 	</label>
 {% endif %}
 
 
 
 {% if search_threads %}
-	<label for="search_threads">
-		Threads <input type="checkbox" id="search_threads" name="search_threads" value="True" checked>  
+	<label for="search_threads" class="search-category">
+		Threads <input type="checkbox" class="checkbox" id="search_threads" name="search_threads" value="True" checked>  
 	</label>
 {% else %}
-	<label for="search_threads">
-		Threads <input type="checkbox" id="search_threads" name="search_threads" value="True">  
+	<label for="search_threads" class="search-category">
+		Threads <input type="checkbox" class="checkbox" id="search_threads" name="search_threads" value="True">  
 	</label>
 {% endif %}
 
 
 
 {% if search_messages %}
-	<label for="search_messages">
-		Messages <input type="checkbox" id="search_messages" name="search_messages" value="True" checked>  
+	<label for="search_messages" class="search-category">
+		Messages <input type="checkbox" class="checkbox" id="search_messages" name="search_messages" value="True" checked>  
 	</label>
 {% else %}
-	<label for="search_messages">
-		Messages <input type="checkbox" id="search_messages" name="search_messages" value="True">  
+	<label for="search_messages" class="search-category">
+		Messages <input type="checkbox" class="checkbox" id="search_messages" name="search_messages" value="True">  
 	</label>
 {% endif %}
-<br><br>
 
-Containing:
-<textarea name="query" rows="2" cols="40">{{ query }}</textarea><br>
+<div class="search-bar">
+	Containing:
+	<input type="text" class="login-line" name="query" value="{{ query }}">
 
-
-<input type="submit" value="Search"> <br>
-
+	<button type="submit"><img src='/static/search.png' class="search-button"></button>
+</div>
 </form>
 
 {% if topics or threads or messages %}
-Results:<br>
+<h3>Results:</h3>
 {% endif %}
 
 {% if topics %}
-	Topics:<br>
+	<h4>Topics:</h4>
 
 	{% for topic in topics %}
-		<a href="/topic/{{ topic.id}}">{{ topic.name }}</a> {{ topic.count_threads }} {{ topic.count_messages}} 
-		{% if topic.latest_message %}
-			{{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
-		{% endif %}<br>
+	<a class="link_class" href="/topic/{{ topic.id }}">
+		<div class="listing">
+			<div>
+				{{ topic.name }}
+			</div>
+			<div class="info-text">
+				Threads: {{ topic.count_threads }}, 
+				{% if topic.latest_message %}
+					messages: {{ topic.count_messages}}<br>Latest: {{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+				{% else %}
+					messages: {{ topic.count_messages}}
+				{% endif %}
+			</div>
+		</div>
+	</a>
 	{% endfor %}
 {% endif %}
 
@@ -74,29 +84,53 @@ Results:<br>
 
 
 {% if threads %}
-	Threads:<br>
+	<h4>Threads:</h4>
 
 	{% for thread in threads %}
-	<a href="/thread/{{ thread.id}}">{{ thread.subject }}</a> {{ thread.count_messages}} 
-	{% if thread.latest_message %}
-		{{ thread.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
-	{% endif %}<br>
+	<a class="link_class" href="/thread/{{ thread.id}}">
+		<div class="listing">
+			<div>
+				{{ thread.subject }}
+			</div>
+			<div class="info-text">
+				{% if thread.latest_message %}
+					Messages: {{ thread.count_messages}}<br>Latest: {{ thread.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+				{% else %}
+					Messages: {{ thread.count_messages}}
+				{% endif %}
+			</div>
+		</div>
+	</a>
 	{% endfor %}
 {% endif %}
 
 
 
 {% if messages %}
-Messages:<br>
+<h4>Messages:</h4>
 
 	{% for message in messages %}
-		{{ message.username }}, {{ message.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}
 		{% if message.is_creator %}
-			<a href="/edit_message/{{ message.id}}">Edit message</a>
+		<a class="link_class" href="/edit_message/{{ message.id}}">
+			<div class="listing">
+				<div>
+					{{ message.content }}
+				</div>
+				<div class="info-text">
+					{{ message.username }}, {{ message.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}
+				</div>
+			</div>
+		</a>
+		{% else %}
+			<div class="listing">
+				<div>
+					{{ message.content }}
+				</div>
+				<div class="info-text">
+					{{ message.username }}, {{ message.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}
+				</div>
+			</div>
 		{% endif %}
-		<br>
-		{{ message.content }}<br>
-		<br>
 	{% endfor %}
 {% endif %}
 

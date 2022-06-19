@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Edit Message{% endblock %}
 {% block content %}
-<h2>Edit Message</h2>
+<h2>Edit Message</h2><br>
 
 {% if error %}
 	<p class="error"> {{ error }} </p>
@@ -9,14 +9,14 @@
 
 <form action="/edit_message/{{ message.id }}" method="POST" onsubmit="return check(this)">
 <button type="submit" formaction="/delete_message/{{ message.id }}">Delete message</button><br>
-Message content: <textarea name="content" rows="3" cols="40">{{ message.content }}</textarea><br>
+Message content:<br>
+<textarea name="content" rows="3" cols="40" class="textbox">{{ message.content }}</textarea><br>
 
-<button type="submit" formaction="/edit_message/{{ message.id }}">Save Changes</button><br>
-
-
+<button type="submit" formaction="/edit_message/{{ message.id }}">Save Changes</button>
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
+
 
 
 <script>

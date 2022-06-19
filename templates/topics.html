@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Topics{% endblock %}
 {% block content %}
-<h2>Topics</h2>
+<h2>Topics</h2><br>
 
 {% if message %}
 	<p class="error"> {{ message }} </p>
@@ -10,20 +10,50 @@
 <form action="/topics" method="POST">
 
 {% if is_admin %}
-	<button type="submit" formaction="/topics">Create New Topic</button><br>
+	<button type="submit" formaction="/topics">Create New Topic</button><br><br><br>
+
 	{% for topic in topic_list %}
-	<button type="submit" formaction="/get_topic_for_editing/{{ topic.id }}">Edit</button>
-	<a href="/topic/{{ topic.id }}">{{ topic.name }}</a> {{ topic.count_threads }} {{ topic.count_messages}} 
-	{% if topic.latest_message %}
-			{{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
-		{% endif %}<br>
+		<a class="link_class" href="/topic/{{ topic.id }}">	
+			<div class="admin-topic-list listing">
+				<div class="admin-edit-button">
+					<button type="submit" formaction="/get_topic_for_editing/{{ topic.id }}">Edit</button>
+				</div>
+				
+				
+				<div>
+					<div>
+						{{ topic.name }}
+					</div>
+					<div class="info-text">
+						Threads: {{ topic.count_threads }}, 
+						{% if topic.latest_message %}
+							messages: {{ topic.count_messages}}<br>Latest: {{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+						{% else %}
+							messages: {{ topic.count_messages}}
+						{% endif %}
+					</div>
+				</div>
+				
+			</div>
+		</a>
 	{% endfor %}
 {% else %}
 	{% for topic in topic_list %}
-		<a href="/topic/{{ topic.id}}">{{ topic.name }}</a> {{ topic.count_threads }} {{ topic.count_messages}} 
-		{% if topic.latest_message %}
-			{{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
-		{% endif %}<br>
+		<a class="link_class" href="/topic/{{ topic.id }}">
+			<div class="listing">
+				<div>
+					{{ topic.name }}
+				</div>
+				<div class="info-text">
+					Threads: {{ topic.count_threads }}, 
+					{% if topic.latest_message %}
+						messages: {{ topic.count_messages}}<br>Latest: {{ topic.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+					{% else %}
+						messages: {{ topic.count_messages}}
+					{% endif %}
+				</div>
+			</div>
+		</a>
 	{% endfor %}
 {% endif %}
 

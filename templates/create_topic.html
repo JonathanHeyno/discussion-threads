@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Create Topic{% endblock %}
 {% block content %}
-<h2>Create Topic</h2>
+<h2>Create Topic</h2><br>
 
 {% if message %}
 	<p class="error"> {{ message }} </p>
@@ -13,7 +13,7 @@ Topic name: <input type="text" name="name", size="40">
 <input type="submit" value="Create"> <br>
 
 <label for="is_hidden">
-	Hidden: <input type="checkbox" id="is_hidden" name="is_hidden" value="Y">  
+	Hidden: <input type="checkbox" class="checkbox" id="is_hidden" name="is_hidden" value="Y">  
 </label>
 <br>
 
@@ -23,7 +23,7 @@ Topic name: <input type="text" name="name", size="40">
 
 {% for user in users %}
 	<label for="have_access">
-		<input type="checkbox" id="have_access" name="have_access" value={{ user.id }}> {{ user.username }}
+		<input type="checkbox" class="checkbox" id="have_access" name="have_access" value={{ user.id }}> {{ user.username }}
 	</label>
 	<br>
 {% endfor %}

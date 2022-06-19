@@ -1,33 +1,65 @@
-{% extends "layout.html" %}
-{% block title %}Login{% endblock %}
-{% block content %}
-<h2>Login</h2>
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Discussion Threads</title>
+    </head>
+<body>
+
+</body>
+</html>
+
+<h1>Discussion Threads</h1>
+
 
 <input id='login_or_create' type="hidden" name="login_or_create" value="login">
 
 <form action="/login" method="POST" onsubmit="return check(this)">
 
-User name: <input type="text" name="username" placeholder="name" maxlength="50"> <br>
-Password: <input type="password" name="password" placeholder="••••" maxlength="50"> <br>
+    <div class="login-frame">
+        <div class="login-border">
+            <div class="login-part">
+                <div class="login-texts">
+                    <div class="login-line">Username:</div>
+                    <div class="login-line">Password:</div>
+                </div>
+                <div class="login-boxes">
+                    <input type="text" class="login-line" name="username" placeholder="name" maxlength="50">
+                    <input type="password" class="login-line" name="password" placeholder="password" maxlength="50">
+                    
+                    <div class="button-to-right">
+                        <button type="submit" onclick="change_to_login(this)">Login</button>
+                    </div>
+                </div>
+            </div>
 
-<button type="submit" onclick="change_to_login(this)">Login</button>
-{% if login_message %}
-	<p class="error"> {{ login_message }} </p>
-{% endif %}
-<br>
-Retype password: <input type="password" name="password2" maxlength="50"> <br>
+            <div class="create-part">
+                <div class="login-line">
+                    {% if login_message %}
+                        <p class="error"> {{ login_message }} </p><br>
+                    {% endif %}
+                    Retype password: <input type="password" class="login-line" name="password2" maxlength="50">
+                </div>
+                <div>
+                    <label for="is_admin" class="checkbox">
+                        Create as admin account: <input type="checkbox" class="checkbox" id="is_admin" name="is_admin" value="Y">  
+                    </label>
+                </div>
+                <div class="button-to-right">
+                    <button type="submit" formaction="/register" onclick="change_to_create(this)">Create</button>
+                </div>
+                {% if register_message %}
+	                <p class="error"> {{ register_message }}
+                {% endif %}
+
+            </div>
 
 
-<label for="is_admin">
-		Create as admin account: <input type="checkbox"  id="is_admin" name="is_admin" value="Y">  
-</label>
-<br>
+        </div>
+    </div>
 
 
-<button type="submit" formaction="/register" onclick="change_to_create(this)">Create</button>
-{% if register_message %}
-	<p class="error"> {{ register_message }} </p>
-{% endif %}
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
 
@@ -69,6 +101,3 @@ function change_to_create(form) {
     document.getElementById("login_or_create").value = "create";
 }
 </script>
-
-
-{% endblock %}

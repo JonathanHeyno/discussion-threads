@@ -1,39 +1,337 @@
 body {
-	background: #FFEFD5;
-    margin: auto;
-    max-width: 45em;
-    font-family: 'Helvetica', 'Arial', sans-serif;
+	background: #f9eedc;
+    /*background: rgb(254, 244, 246);*/
+    /*background: #fffcf8;*/
+    /*margin: auto;*/
+    /* max-width: 45em;*/
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-size: 1rem;
+    margin: 0em;
+    color: rgb(98, 3, 139);
 }
+  
+
+main {
+    margin-left: 7em;
+    padding-top: 6em;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    border-bottom: solid;
+    border-width: medium;
+    border-color: rgb(98, 3, 139);
+    align-items: center;
+    position: fixed;
+    background: #f9eedc;
+    left: 0em;
+    right: 0em;
+    z-index: 200;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    border-right: solid;
+    border-width: thin;
+    border-color: rgb(98, 3, 139);
+    align-items: center;
+    position: fixed;
+    background: #f9eedc;
+    top: 4.0em;
+    bottom: 0em;
+    z-index: 100;
+}
+
+.search-icon {
+    /*width: 10px;*/
+    max-width: 2em;
+}
+
+.nav-options .tooltip {
+  position: absolute;
+  background-color: rgb(230, 189, 248);
+  border-radius: 0.25em;
+  top: 0.75em;
+  right: -4.8em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.nav-options:hover .tooltip {
+    opacity: 1;
+}
+
+
+.topics {
+    /*background-color:rgb(216, 210, 127);*/
+    /*background-color: rgb(133, 216, 127);*/
+    background-color: rgb(218, 181, 108);
+    font-size: larger;
+    font-weight: bold;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-top-right-radius: 2em;
+    border-bottom-right-radius: 2em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.topics:hover {
+    /*background-color:rgb(213, 206, 98);*/
+    color: rgb(214, 108, 21);
+}
+
+.two {
+    display:flex;
+    flex-direction: row;
+    background-color: rgb(216, 210, 127);
+    border-top-right-radius: 2em;
+    border-bottom-right-radius: 2em;
+}
+
+.threads {
+    background-color:rgb(216, 210, 127);
+    font-size: larger;
+    font-weight: bold;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-top-right-radius: 2em;
+    border-bottom-right-radius: 2em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.threads:hover {
+    /*color: rgb(218, 128, 32);*/
+    color: rgb(214, 108, 21);
+}
+
+
+.login-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-border {
+    border: solid;
+    border-color: rgb(185, 109, 217);
+    border-radius: 1em;
+    padding: 2em;
+}
+
+.login-part {
+    display: flex;
+    flex-direction: row;
+}
+
+.login-texts {
+    display: inline-block;
+    padding-right: 0.5em;
+    justify-content: center;
+}
+
+.login-boxes {
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+}
+
+.login-line {
+    margin-bottom: 0.5em;
+    align-items: center;
+    border-color: rgb(210, 121, 249);
+    border-width: thin;
+    border-radius: 0.15em;
+    height: 1rem;
+    padding-left: 0.5em;
+    color: rgb(98, 3, 139);
+}
+
+.login-line::placeholder {
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-size: 1rem;
+}
+
+.create-part {
+    margin-top: 0.5em;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.nav-options {
+    /*padding-left: 2em;*/
+    /*max-width: 5em;*/
+    background: #f8ebd6;
+    position: relative;
+}
+
+
+.button-to-right {
+    display:flex;
+    justify-content: end;
+    flex: 1;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: left;
+    padding-top:2em;
+    padding-bottom: 2em;
+    align-items: center;
+}
+
+.search-bar .login-line {
+    position: relative;
+    margin-left: 0.6em;
+    margin-right: 0.6em;
+    top: 0.3em;
+}
+
+.search-category {
+    padding-left: 0.8em;
+}
+
+.search-button {
+    max-width: 1em;
+    padding-left: 0.15em;
+    padding-top: 0.1em;
+}
+
+
+h1 {
+    color: rgb(98, 3, 139);
+    text-align: center;
+    padding-top: 3em;
+    padding-bottom: 1em;
+}
+
 
 h2 {
     margin-top: 0;
+    color: rgb(98, 3, 139);
 }
 
-nav ul {
-    padding: 0;
-	margin: .5em;
-    text-align: center;
+h4 {
+    padding-top: 1em;
+    text-decoration: underline;
 }
 
 
-nav li {
+
+.nav-button {
     display: inline-block;
     padding: .5em 1em;
+    border-radius: 0em;
+    /*margin: .2em;*/
+    color: rgb(98, 3, 139);
+    font-size: small;
+    font-weight: bold;
+    background-color: transparent;
+    cursor: pointer;
+    border-color: rgb(210, 121, 249);
+    border-width: medium;
+}
+
+.nav-button:hover {
+    background-color: rgb(224, 167, 248);
+}
+
+button {
+    display: inline-block;
+    padding: .2em 0.5em;
     border-radius: .5em;
-    margin: .2em;
+    color: rgb(98, 3, 139);
+    font-size: small;
+    font-weight: bold;
+    background-color: transparent;
+    cursor: pointer;
+    border-color: rgb(210, 121, 249);
+    border-width: medium;
 }
 
-nav li a {
-    text-decoration: none;
-    color: #000;
+button:hover {
+    background-color: rgb(224, 167, 248);
 }
 
-nav li:hover {
-    background-color: rgb(226, 226, 226);
+
+
+.listing {
+    padding: 0.5em;
+    display: flex;
+    flex-direction: column;
+}
+
+.listing:hover {
+    border: solid;
+    border-width: thin;
+    border-color: rgb(216, 210, 127);
+    cursor: pointer;
+    background-color: rgb(233, 229, 174);
+    transition: 0.15;
+    border-radius: 0.5em;
+}
+
+.admin-topic-list {
+    /*display:inline-block;*/
+    /*vertical-align: top;*/
+    display: flex;
+    flex-direction:  row;
+    padding-right: 1em;
+}
+
+.admin-edit-button {
+    padding-top: 0.5em;
+    display:inline-block;
+    padding-right: 0.5em;
+}
+
+.info-text {
+    font-size: small;
+    color: rgb(59, 59, 59);
+    display: flex;
+    flex: 1;
 }
 
 
 .error {
 color: red;
 font-weight: bold;
+}
+
+.link_class {
+    display:block;
+    overflow:auto;
+    /*padding:5px 7px;*/
+    text-decoration: none;
+    color: rgb(98, 3, 139);
+}
+
+.checkbox {
+    cursor: pointer;
+    accent-color: rgb(98, 3, 139);
+    width: 1rem;
+    height: 1rem;
+}
+
+.textbox {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    align-items: center;
+    border-color: rgb(210, 121, 249);
+    border-width: thin;
+    border-radius: 0.15em;
+    padding-left: 0.5em;
+    color: rgb(98, 3, 139);
+    font-size: 1rem;
 }

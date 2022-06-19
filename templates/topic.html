@@ -9,17 +9,27 @@
 
 <form action="/topic/{{ topic.id }}" method="POST">
 
-<input type="submit" value="Create New Thread"> <br>
+<button type="submit">Create New Thread</button>
 
 
 
-Threads:<br>
+<h3>Threads:</h3>
 
 {% for thread in threads %}
-<a href="/thread/{{ thread.id}}">{{ thread.subject }}</a> {{ thread.count_messages}} 
-{% if thread.latest_message %}
-	{{ thread.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
-{% endif %}<br>
+<a class="link_class" href="/thread/{{ thread.id}}">
+	<div class="listing">
+		<div>
+			{{ thread.subject }}
+		</div>
+		<div class="info-text">
+			{% if thread.latest_message %}
+				Messages: {{ thread.count_messages}}<br>Latest: {{ thread.latest_message.strftime("%Y-%m-%d %H:%M:%S") }}
+			{% else %}
+				Messages: {{ thread.count_messages}}
+			{% endif %}
+		</div>
+	</div>
+</a>
 {% endfor %}
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
