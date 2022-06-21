@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Create Thread{% endblock %}
 {% block content %}
-<h2><a href="/topics">Topics</a>: {{ topic.name }}</h2>
+<h2><a href="/topics" class="breadcrum">Topics</a> &#62; <a href="/topic/{{ topic.id }}" class="breadcrum">{{ topic.name }}</a></h2><br>
 
 <h3>Create thread</h3>
 
@@ -9,11 +9,16 @@
 	<p class="error"> {{ message }} </p>
 {% endif %}
 
+<form action="/topic/{{ topic.id }}" method="GET">
+    <button type="submit" formaction="/topic/{{ topic.id }}">Cancel</button>
+</form><br>
+
 <form action="/create_thread/{{ topic.id }}" method="POST" onsubmit="return check(this)">
 
-Thread name: <textarea name="subject" rows="2" cols="40"></textarea><br>
-Message: <textarea name="message" rows="3" cols="40"></textarea><br>
-<input type="submit" value="Create"> <br>
+Thread name: <input type="text" name="subject" size="40" class="text-line"><br>
+<br>
+Message:<br> <textarea name="message" class="textbox" rows="3" cols="40"></textarea><br>
+<button type="submit">Create</button>
 
 
 
@@ -21,19 +26,22 @@ Message: <textarea name="message" rows="3" cols="40"></textarea><br>
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
 
+<br>
+<span id="error" class="error"></span>
 
 <script>
 function check(form) {
+    var error = document.getElementById("error");
     if (form.subject.value.length == 0) {
-        alert("Topic cannot be empty");
+        error.textContent = "Subject cannot be empty";
         return false;
     }
     if (form.subject.value.length > 250) {
-        alert("Subject too long (max 250 characters)");
+        error.textContent = "Subject too long (max 250 characters)";
         return false;
     }
 	if (form.message.value.length > 500) {
-        alert("Message too long (max 500 characters)");
+        error.textContent = "Message too long (max 500 characters)";
         return false;
     }
     return true;

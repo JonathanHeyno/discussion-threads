@@ -54,6 +54,9 @@ Search for:
 </div>
 </form>
 
+
+<span id="error" class="error"></span>
+
 {% if topics or threads or messages %}
 <h3>Results:</h3>
 {% endif %}
@@ -138,16 +141,17 @@ Search for:
 
 <script>
 function check(form) {
+	var error = document.getElementById("error");
 	if (document.querySelector('#search_topics').checked == false && document.querySelector('#search_threads').checked == false && document.querySelector('#search_messages').checked == false) {
-		alert("Pick at least one category to search (topics, threads or messages)");
+		error.textContent = "Pick at least one category to search (topics, threads or messages)";
         return false;
     }
     if (form.query.value.length == 0) {
-        alert("Search string cannot be empty");
+		error.textContent = "Search string cannot be empty";
         return false;
     }
     if (form.query.value.length > 1000) {
-        alert("Search string too long");
+		error.textContent = "Search string too long";
         return false;
     }
     return true;

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Edit Thread{% endblock %}
 {% block content %}
-<h2>Edit Thread</h2>
+<h2>Edit Thread</h2><br>
 
 {% if message %}
 	<p class="error"> {{ message }} </p>
@@ -11,24 +11,35 @@
 
 <form action="/thread/{{ thread.id }}" method="POST" onsubmit="return check(this)">
 <button type="submit" formaction="/delete_thread/{{ thread.id }}" onclick="change_to_delete(this)">Delete thread</button><br>
-Thread subject: <textarea name="subject" rows="2" cols="40">{{ thread.subject }}</textarea><br>
+<br>
+Thread subject: <input type="text" name="subject" value="{{ thread.subject }}" size="40" class="text-line"><br>
 
-<button type="submit" formaction="/edit_thread/{{ thread.id }}" onclick="change_to_save(this)">Save Changes</button><br>
-
+<br>
+<button type="submit" formaction="/edit_thread/{{ thread.id }}" onclick="change_to_save(this)">Save Changes</button>
 
 
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
 
 
+<br>
+
+<form action="/thread/{{ thread.id }}" method="GET">
+<button type="submit" formaction="/thread/{{ thread.id }}">Cancel</button>
+</form>
+
+<br>
+<span id="error" class="error"></span>
+
 <script>
 function check(form) {
+    var error = document.getElementById("error");
     if (document.getElementById("save_or_delete").value == "save" && form.subject.value.length == 0) {
-        alert("Subject cannot be empty");
+        error.textContent = "Subject cannot be empty";
         return false;
     }
     if (document.getElementById("save_or_delete").value == "save" && form.subject.value.length > 250) {
-        alert("Subject too long (max 250 characters)");
+        error.textContent = "Subject too long (max 250 characters)";
         return false;
     }
     return true;

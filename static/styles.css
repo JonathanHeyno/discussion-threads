@@ -1,9 +1,5 @@
 body {
 	background: #f9eedc;
-    /*background: rgb(254, 244, 246);*/
-    /*background: #fffcf8;*/
-    /*margin: auto;*/
-    /* max-width: 45em;*/
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
     font-size: 1rem;
     margin: 0em;
@@ -45,7 +41,6 @@ main {
 }
 
 .search-icon {
-    /*width: 10px;*/
     max-width: 2em;
 }
 
@@ -71,8 +66,6 @@ main {
 
 
 .topics {
-    /*background-color:rgb(216, 210, 127);*/
-    /*background-color: rgb(133, 216, 127);*/
     background-color: rgb(218, 181, 108);
     font-size: larger;
     font-weight: bold;
@@ -85,7 +78,6 @@ main {
 }
 
 .topics:hover {
-    /*background-color:rgb(213, 206, 98);*/
     color: rgb(214, 108, 21);
 }
 
@@ -110,7 +102,6 @@ main {
 }
 
 .threads:hover {
-    /*color: rgb(218, 128, 32);*/
     color: rgb(214, 108, 21);
 }
 
@@ -154,6 +145,7 @@ main {
     height: 1rem;
     padding-left: 0.5em;
     color: rgb(98, 3, 139);
+    font-size: 1rem;
 }
 
 .login-line::placeholder {
@@ -170,8 +162,6 @@ main {
 
 
 .nav-options {
-    /*padding-left: 2em;*/
-    /*max-width: 5em;*/
     background: #f8ebd6;
     position: relative;
 }
@@ -208,12 +198,19 @@ main {
     padding-top: 0.1em;
 }
 
+.breadcrum {
+    text-decoration: none;
+}
+
+.breadcrum:hover {
+    color: rgb(214, 108, 21);
+}
 
 h1 {
     color: rgb(98, 3, 139);
     text-align: center;
-    padding-top: 3em;
-    padding-bottom: 1em;
+    padding-top: 0;
+    margin-top: 0;
 }
 
 
@@ -233,7 +230,6 @@ h4 {
     display: inline-block;
     padding: .5em 1em;
     border-radius: 0em;
-    /*margin: .2em;*/
     color: rgb(98, 3, 139);
     font-size: small;
     font-weight: bold;
@@ -283,8 +279,6 @@ button:hover {
 }
 
 .admin-topic-list {
-    /*display:inline-block;*/
-    /*vertical-align: top;*/
     display: flex;
     flex-direction:  row;
     padding-right: 1em;
@@ -312,7 +306,6 @@ font-weight: bold;
 .link_class {
     display:block;
     overflow:auto;
-    /*padding:5px 7px;*/
     text-decoration: none;
     color: rgb(98, 3, 139);
 }
@@ -334,4 +327,44 @@ font-weight: bold;
     padding-left: 0.5em;
     color: rgb(98, 3, 139);
     font-size: 1rem;
+}
+
+.text-line {
+    margin-bottom: 0.5em;
+    align-items: center;
+    border-color: rgb(210, 121, 249);
+    border-width: thin;
+    border-radius: 0.15em;
+    height: 1rem;
+    color: rgb(98, 3, 139);
+    width: 12em;
+    font-size: 1rem;
+}
+
+.login-logo {
+    max-width: 2em;
+    padding-right: 1em;
+}
+
+.titleline {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 3em;
+    padding-bottom: 1em;
+}
+
+.logo {
+    max-width: 3.5em;
+    padding-right: 0.5em;
+}
+
+.logo-container {
+    display: flex;
+    position: absolute;
+    top: 0.17em;
+    max-width: 3.5em;
+    align-items: center;
+    padding-left: 18em;
+    z-index: -1;
 }

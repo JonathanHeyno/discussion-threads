@@ -1,25 +1,28 @@
 {% extends "layout.html" %}
 {% block title %}Thread{% endblock %}
 {% block content %}
-<h2><a href="/topics">Topics</a>: <a href="/topic/{{ topic.id}}">{{ topic.name }}</a></h2>
-<h3>Thread: {{ thread.subject }}</h3>
+<h2><a href="/topics" class="breadcrum">Topics</a> &#62; <a href="/topic/{{ topic.id}}" class="breadcrum">{{ topic.name }}</a></h2>
+<h2>&#62; <a href="/thread/{{ thread.id}}" class="breadcrum">{{ thread.subject }}</a></h2>
 
 
 <input id='edit_or_send' type="hidden" name="edit_or_send" value="send">
 
 <form action="/thread/{{ thread.id }}" method="POST" onsubmit="return check(this)">
 {% if is_creator %}
-	<button type="submit" formaction="/get_thread_for_editing/{{ thread.id }}" onclick="change_to_edit(this)">Edit Thread</button><br><br>
+	<button type="submit" formaction="/get_thread_for_editing/{{ thread.id }}" onclick="change_to_edit(this)">Edit Thread</button><br>
 {% endif %}
 
 {% if message %}
 	<p class="error"> {{ message }} </p>
 {% endif %}
+<p><span id="error" class="error"></span></p>
+<br>
 
 
 New Message:<br>
 <textarea name="content" rows="3" cols="40" class="textbox"></textarea><br>
 <button type="submit" onclick="change_to_send(this)">Send message</button><br><br>
+
 
 
 
@@ -54,12 +57,14 @@ New Message:<br>
 
 <script>
 function check(form) {
+    var error = document.getElementById("error");
     if (document.getElementById("edit_or_send").value == "send" && form.content.value.length == 0) {
-        alert("Message cannot be empty");
+        error.textContent = "Message cannot be empty";
         return false;
     }
     if (document.getElementById("edit_or_send").value == "send" && form.content.value.length > 500) {
         alert("Message too long (max 500 characters)");
+        error.textContent = "Message too long (max 500 characters)";
         return false;
     }
     return true;

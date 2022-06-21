@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 {% block title %}Edit Topic{% endblock %}
 {% block content %}
-<h2>Edit Topic</h2>
+<h2>Edit Topic</h2><br>
+
+<form action="/topics" method="GET">
+    <button type="submit" formaction="/topics">Cancel</button>
+</form><br>
 
 <input id='save_or_delete' type="hidden" name="save_or_delete" value="save">
 
@@ -9,46 +13,47 @@
 
 <button type="submit" formaction="/delete_topic/{{ topic.id }}" onclick="change_to_delete(this)">Delete topic</button><br>
 
-<input type="submit" value="Save Changes" onclick="change_to_save(this)"> <br>
+<br>
 
-Topic name: <input type="text" name="name", value="{{ topic.name }}" size="40"><br>
+<button type="submit" onclick="change_to_save(this)">Save Changes</button><br><br>
+
+Topic name: <input type="text" name="name", value="{{ topic.name }}" size="40" class="text-line"><br>
 
 
 {% if topic.is_hidden %}
 	<label for="is_hidden">
-		Hidden: <input type="checkbox" id="is_hidden" name="is_hidden" value="Y" checked>  
+		Hidden: <input type="checkbox" class="checkbox" id="is_hidden" name="is_hidden" value="Y" checked>  
 	</label>
-<br>
 
 
 {% else %}
 	<label for="is_hidden">
-		Hidden: <input type="checkbox" id="is_hidden" name="is_hidden" value="Y">  
+		Hidden: <input type="checkbox" class="checkbox" id="is_hidden" name="is_hidden" value="Y">  
 	</label>
-<br>
+<br><br><br>
 {% endif %}
 
 
-For a topic that is or will be hidden:<br>
+For a topic that is or will be hidden:<br><br>
 
 Remove access from following users (admins will always have access):<br>
 
 {% for user in user_accesses %}
 	{% if user.has_access %}
 	<label for="revoke_access">
-		<input type="checkbox" id="revoke_access" name="revoke_access" value={{ user.id }}> {{ user.username }}
+		<input type="checkbox" class="checkbox" id="revoke_access" name="revoke_access" value={{ user.id }}> {{ user.username }}
 	</label>
 	<br>
 	{% endif %}
 {% endfor %}
 
 
-Grant access for following users:<br>
+<br>Grant access for following users:<br>
 
 {% for user in user_accesses %}
 	{% if not user.has_access %}
 		<label for="grant_access">
-		<input type="checkbox" id="grant_access" name="grant_access" value={{ user.id }}> {{ user.username }}
+		<input type="checkbox" class="checkbox" id="grant_access" name="grant_access" value={{ user.id }}> {{ user.username }}
 		</label>
 		<br>
 	{% endif %}
@@ -58,15 +63,19 @@ Grant access for following users:<br>
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
 
+<br>
+<span id="error" class="error"></span>
+
 
 <script>
 function check(form) {
+	var error = document.getElementById("error");
     if (document.getElementById("save_or_delete").value == "save" && form.name.value.length == 0) {
-        alert("Topic cannot be empty");
+		error.textContent = "Topic cannot be empty";
         return false;
     }
     if (document.getElementById("save_or_delete").value == "save" && form.name.value.length > 250) {
-        alert("Topic too long (max 250 characters)");
+		error.textContent = "Topic too long (max 250 characters)";
         return false;
     }
     return true;

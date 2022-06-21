@@ -2,6 +2,7 @@
 <html>
 <head>
 	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Discussion Threads - {% block title %}{% endblock %}</title>
@@ -14,15 +15,28 @@
 					Topics
 				</div>
 			</a>
-			{% if topic is defined %}
-			<a class="link_class" href="/topic/{{ topic.id}}">
-				<div class="threads">
-					Threads
-				</div>
-			</a>
+			{% if topic is defined or thread is defined %}
+				{% if thread is defined %}
+				<a class="link_class" href="/topic/{{ thread.topic_id}}">
+					<div class="threads">
+						Threads
+					</div>
+				</a>
+				{% else %}
+				<a class="link_class" href="/topic/{{ topic.id}}">
+					<div class="threads">
+						Threads
+					</div>
+				</a>
+				{% endif %}
 			{% endif %}
+			
+		</div>
+		<div class="logo-container">
+			<img src="/static/logo.png" alt="Logo" class="logo"> Discussion Threads
 		</div>
 	</nav>
+
 	<nav class="sidebar">
 		<div class="nav-options">
 			

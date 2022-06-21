@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Topic{% endblock %}
 {% block content %}
-<h2><a href="/topics">Topics</a>: {{ topic.name }}</h2>
+<h2><a href="/topics" class="breadcrum">Topics</a> &#62; <a href="/topic/{{ topic.id }}" class="breadcrum">{{ topic.name }}</a></h2>
 
 {% if message %}
 	<p class="error"> {{ message }} </p>

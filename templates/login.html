@@ -2,88 +2,100 @@
 <html>
     <head>
         <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Discussion Threads</title>
     </head>
 <body>
-
+    <div class="titleline">
+        <div>
+            <img src="/static/logo.png" alt="Logo" class="login-logo">
+        </div>
+        <div>
+            <h1>Discussion Threads</h1>
+        </div>
+    </div>
+    
+    <input id='login_or_create' type="hidden" name="login_or_create" value="login">
+    
+    <form action="/login" method="POST" onsubmit="return check(this)">
+    
+        <div class="login-frame">
+            <div class="login-border">
+                <div class="login-part">
+                    <div class="login-texts">
+                        <div class="login-line">Username:</div>
+                        <div class="login-line">Password:</div>
+                    </div>
+                    <div class="login-boxes">
+                        <input type="text" class="login-line" name="username" placeholder="name" maxlength="50">
+                        <input type="password" class="login-line" name="password" placeholder="password" maxlength="50">
+                        
+                        <div class="button-to-right">
+                            <button type="submit" onclick="change_to_login(this)">Login</button>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="create-part">
+                    <div class="login-line">
+                        {% if login_message %}
+                            <p class="error"> {{ login_message }} </p><br>
+                        {% endif %}
+                        Retype password: <input type="password" class="login-line" name="password2" maxlength="50">
+                    </div>
+                    <div>
+                        <label for="is_admin" class="checkbox">
+                            Create as admin account: <input type="checkbox" class="checkbox" id="is_admin" name="is_admin" value="Y">  
+                        </label>
+                    </div>
+                    <div class="button-to-right">
+                        <button type="submit" formaction="/register" onclick="change_to_create(this)">Create</button>
+                    </div>
+                    {% if register_message %}
+                        <p class="error"> {{ register_message }}
+                    {% endif %}
+    
+                </div>
+    
+    
+            </div>
+        </div>
+    
+    
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+    
+    <br>
+    <div class="login-frame">
+    <span id="error" class="error"></span>
+    </div>
 </body>
 </html>
 
-<h1>Discussion Threads</h1>
-
-
-<input id='login_or_create' type="hidden" name="login_or_create" value="login">
-
-<form action="/login" method="POST" onsubmit="return check(this)">
-
-    <div class="login-frame">
-        <div class="login-border">
-            <div class="login-part">
-                <div class="login-texts">
-                    <div class="login-line">Username:</div>
-                    <div class="login-line">Password:</div>
-                </div>
-                <div class="login-boxes">
-                    <input type="text" class="login-line" name="username" placeholder="name" maxlength="50">
-                    <input type="password" class="login-line" name="password" placeholder="password" maxlength="50">
-                    
-                    <div class="button-to-right">
-                        <button type="submit" onclick="change_to_login(this)">Login</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="create-part">
-                <div class="login-line">
-                    {% if login_message %}
-                        <p class="error"> {{ login_message }} </p><br>
-                    {% endif %}
-                    Retype password: <input type="password" class="login-line" name="password2" maxlength="50">
-                </div>
-                <div>
-                    <label for="is_admin" class="checkbox">
-                        Create as admin account: <input type="checkbox" class="checkbox" id="is_admin" name="is_admin" value="Y">  
-                    </label>
-                </div>
-                <div class="button-to-right">
-                    <button type="submit" formaction="/register" onclick="change_to_create(this)">Create</button>
-                </div>
-                {% if register_message %}
-	                <p class="error"> {{ register_message }}
-                {% endif %}
-
-            </div>
-
-
-        </div>
-    </div>
-
-
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-</form>
 
 
 <script>
 function check(form) {
+    var error = document.getElementById("error");
     if (form.username.value.length == 0) {
-        alert("Username cannot be empty");
+        error.textContent = "Username cannot be empty";
         return false;
     }
     if (form.username.value.length > 50) {
-        alert("Username too long (max 50 characters)");
+        error.textContent = "Username too long (max 50 characters)";
         return false;
     }
 	if (form.password.value.length == 0) {
-        alert("Password cannot be empty");
+        error.textContent = "Password cannot be empty";
         return false;
     }
 	if (form.password.value.length > 50) {
-        alert("Password too long (max 50 characters)");
+        error.textContent = "Password too long (max 50 characters)";
         return false;
     }
 	if (document.getElementById("login_or_create").value == "create" && form.password.value != form.password2.value) {
-        alert("Passwords differ");
+        error.textContent = "Passwords differ";
         return false;
     }
     return true;

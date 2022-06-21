@@ -8,7 +8,7 @@
 {% endif %}
 
 <form action="/edit_message/{{ message.id }}" method="POST" onsubmit="return check(this)">
-<button type="submit" formaction="/delete_message/{{ message.id }}">Delete message</button><br>
+<button type="submit" formaction="/delete_message/{{ message.id }}">Delete message</button><br><br>
 Message content:<br>
 <textarea name="content" rows="3" cols="40" class="textbox">{{ message.content }}</textarea><br>
 
@@ -17,16 +17,24 @@ Message content:<br>
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 </form>
 
+<br>
+<form action="/thread/{{ message.thread_id }}" method="GET">
+    <button type="submit" formaction="/thread/{{ message.thread_id }}">Cancel</button>
+</form>
+
+<br>
+<span id="error" class="error"></span>
 
 
 <script>
 function check(form) {
+    var error = document.getElementById("error");
     if (form.content.value.length == 0) {
-        alert("Message cannot be empty");
+        error.textContent = "Message cannot be empty";
         return false;
     }
     if (form.content.value.length > 500) {
-        alert("Message too long (max 500 characters)");
+        error.textContent = "Message too long (max 500 characters)";
         return false;
     }
     return true;
