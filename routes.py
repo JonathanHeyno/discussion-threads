@@ -10,7 +10,9 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        args = request.args
+        login_message = args.get("login_message", default="", type=str)
+        return render_template("login.html", login_message=login_message)
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -31,12 +33,12 @@ def register():
     if register_message == "OK":
         return redirect("/topics")
     else:
-        return render_template("login.html", register_message=register_message)
+        return redirect("/login?&login_message="+str(register_message))
 
 @app.route("/topics", methods=["GET", "POST"])
 def show_topics():
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     if request.method == "GET":
         return render_template("topics.html", is_admin=users.is_admin(), topic_list=topics.list_topics())
     if request.method == "POST":
@@ -55,7 +57,7 @@ def logout():
 @app.route("/create_topic", methods=["GET", "POST"])
 def create_topic():
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     if not users.is_admin():
         abort(401, description="Not an administrator")
     if request.method == "GET":
@@ -81,7 +83,7 @@ def create_topic():
 @app.route("/edit_topic/<int:topic_id>", methods=["GET", "POST"])
 def edit_topic(topic_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     if not users.is_admin():
         abort(403, description="Not an administrator")
     topic = topics.get_topic_if_user_has_access(topic_id)
@@ -116,7 +118,7 @@ def edit_topic(topic_id):
 @app.route("/topic/<int:topic_id>", methods=["GET", "POST"])
 def topic(topic_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     if request.method == "GET":
         topic = topics.get_topic_if_user_has_access(topic_id)
         if not topic:
@@ -128,7 +130,7 @@ def topic(topic_id):
 @app.route("/create_thread/<int:topic_id>", methods=["GET", "POST"])
 def create_thread(topic_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     topic = topics.get_topic_if_user_has_access(topic_id)
     if not topic:
         abort(404, description="Access to topic denied or topic does not exist")
@@ -155,7 +157,7 @@ def create_thread(topic_id):
 @app.route("/thread/<int:thread_id>", methods=["GET", "POST"])
 def thread(thread_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     thread = threads.get_thread(thread_id)
     if not thread:
         abort(404, description="Thread does not exist")
@@ -198,7 +200,7 @@ def get_thread_for_editing(thread_id):
 @app.route("/edit_thread/<int:thread_id>", methods=["GET", "POST"])
 def edit_thread(thread_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     thread = threads.get_thread(thread_id)
     if not thread:
         abort(404, description="Thread does not exist")
@@ -225,7 +227,7 @@ def edit_thread(thread_id):
 @app.route("/edit_message/<int:message_id>", methods=["GET", "POST"])
 def edit_message(message_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     message = messages.get_message(message_id)
     if not message:
         abort(404, description="Message does not exist")
@@ -253,7 +255,7 @@ def edit_message(message_id):
 @app.route("/delete_message/<int:message_id>", methods=["POST"])
 def delete_message(message_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     message = messages.get_message(message_id)
     if not message:
         abort(404, description="Message does not exist")
@@ -270,7 +272,7 @@ def delete_message(message_id):
 @app.route("/delete_thread/<int:thread_id>", methods=["POST"])
 def delete_thread(thread_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     thread = threads.get_thread(thread_id)
     if not thread:
         abort(404, description="Thread does not exist")
@@ -285,7 +287,7 @@ def delete_thread(thread_id):
 @app.route("/delete_topic/<int:topic_id>", methods=["POST"])
 def delete_topic(topic_id):
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
     if not users.is_admin():
         abort(403, description="Not an administrator")
     topics.delete(topic_id)
@@ -297,7 +299,7 @@ def delete_topic(topic_id):
 @app.route("/search")
 def search():
     if users.user_id() == 0:
-        return render_template("login.html", login_message="Not logged in")
+        return redirect("/login?&login_message=Not logged in")
 
     args = request.args
     query = args.get("query", default="", type=str)

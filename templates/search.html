@@ -125,14 +125,16 @@ Search for:
 			</div>
 		</a>
 		{% else %}
-			<div class="listing">
-				<div>
-					{{ message.content }}
+			<a class="link_class" href="/thread/{{ message.thread_id }}">
+				<div class="listing">
+					<div>
+						{{ message.content }}
+					</div>
+					<div class="info-text">
+						{{ message.username }}, {{ message.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}
+					</div>
 				</div>
-				<div class="info-text">
-					{{ message.username }}, {{ message.sent_at.strftime("%Y-%m-%d %H:%M:%S") }}
-				</div>
-			</div>
+			</a>
 		{% endif %}
 	{% endfor %}
 {% endif %}

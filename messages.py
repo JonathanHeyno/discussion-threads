@@ -98,7 +98,7 @@ def delete(message_id):
 def search(query):
     if users.is_admin():
         sql = """
-        SELECT  m.id, m.content, m.creator_id, m.sent_at, u.username, 
+        SELECT  m.id, m.content, m.thread_id, m.creator_id, m.sent_at, u.username, 
                 CASE WHEN m.creator_id=:user_id THEN True ELSE False END AS is_creator 
         FROM messages m, users u 
         WHERE m.is_visible = True AND m.creator_id=u.id AND UPPER(content) LIKE UPPER(:query) 
@@ -107,7 +107,7 @@ def search(query):
         result = db.session.execute(sql, {"user_id":users.user_id(), "query":"%"+query+"%"})
     else:
         sql = """
-        SELECT  m.id, m.content, m.creator_id, m.sent_at, u.username, 
+        SELECT  m.id, m.content, m.thread_id, m.creator_id, m.sent_at, u.username, 
                 CASE WHEN m.creator_id=:user_id THEN True ELSE False END AS is_creator 
         FROM 
             messages m, 

@@ -15,7 +15,7 @@ The application has the following functionalities:
 - Users can create new threads under topics
 - Users can post messages under threads
 - Users can edit and remove threads and messages they created
-- Users can search for messages containg a given string
+- Users can search for topics, threads and messages containg a given string
 - The application shows for each topic:
   - The number of threads in the topic
   - The total number of messages
